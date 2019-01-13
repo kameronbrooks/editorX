@@ -7,9 +7,17 @@ namespace EditorX
     public class Container : Element
     {
         Window _window;
-        public Container(string name, Window window) : base(name, null)
+
+        public Window window
         {
-            _window = window;
+            get
+            {
+                return _window;
+            }
+            set
+            {
+                _window = value;
+            }
         }
 
         public override string tag
@@ -29,14 +37,5 @@ namespace EditorX
             DrawChildren();
         }
 
-        protected override SerializedElement ToSerialized()
-        {
-            return null;
-        }
-
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            return;
-        }
     }
 }

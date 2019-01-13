@@ -6,18 +6,24 @@ using UnityEngine.Events;
 
 namespace EditorX
 {
-    public abstract class Element : IElement
-    {
-        protected IElement _parent;
-        protected List<IElement> _children;
+    public delegate void EventCallback(Element elem, Event evnt);
 
-        protected string _name;
+    public abstract class Element : ScriptableObject, ISerializationCallbackReceiver
+    {
+        [SerializeField]
+        protected Element _parent;
+        [SerializeField]
+        protected List<Element> _children;
         protected Rect _rect;
         protected Dictionary<string, object> _styleData;
         protected Color _backgroundColor;
+        [System.NonSerialized]
         private Dictionary<string, EventCallback> _eventHandlers;
+        [SerializeField]
+        List<DelegateSerialization.SerializedDelegate> _serializedDelegates;
+        [SerializeField]
         private Style _style;
-        public IElement parent
+        public Element parent
         {
             get
             {
@@ -29,7 +35,7 @@ namespace EditorX
             }
         }
 
-        public List<IElement> children
+        public List<Element> children
         {
             get
             {
@@ -38,17 +44,7 @@ namespace EditorX
 
         }
 
-        public string name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+
         public Rect rect
         {
             get
@@ -73,7 +69,7 @@ namespace EditorX
             get;
         }
 
-
+        
         protected bool CallEvent(string eventName)
         {
             EventCallback handler = null;
@@ -85,16 +81,13 @@ namespace EditorX
             return false;
         }
         
-
-        protected Element(string name, Style style = null)
+        public void OnEnable()
         {
-            _name = name;
-            _style = (style != null) ? new Style(style) : new Style();
-            _children = new List<IElement>();
-            _rect = new Rect();
-            _parent = null;
-            _eventHandlers = new Dictionary<string, EventCallback>();
-            
+            if (_style == null) _style = new Style();
+            if(_children == null) _children = new List<Element>();
+            if(_rect == null) _rect = new Rect();
+            if(_parent == null) _parent = null;
+            if(_eventHandlers == null) _eventHandlers = new Dictionary<string, EventCallback>();
         }
 
         protected virtual void InitializeGUIStyle()
@@ -115,26 +108,41 @@ namespace EditorX
 
         }
 
-        public virtual void AddChild(IElement child)
+        public virtual void AddChild(Element child)
         {
+            if (child == null)
+            {
+                Debug.LogWarning("No child passed to element");
+                return;
+            }
             _children.Add(child);
             child.parent = this;
-
         }
+
+        public virtual void Unload()
+        {
+            for (int i = 0; i < _children.Count; i++)
+            {
+                _children[i].Unload();
+            }
+
+            DestroyImmediate(this);
+        }
+        
         public virtual void AddText(string text)
         {
-            IElement child = new TextNode(text);
+            Element child = TextNode.Create(text);
             _children.Add(child);
             child.parent = this;
 
-            if (style != null)
+            if (style["color"] != null)
             {
-                child.style = style;
+                child.style["color"] = style["color"];
             }
 
         }
-
-        public virtual IElement GetChildById(string name)
+        
+        public virtual Element GetChildById(string name)
         {
             for(int i = 0; i < _children.Count; i++)
             {
@@ -142,7 +150,7 @@ namespace EditorX
             }
             for (int i = 0; i < _children.Count; i++)
             {
-                IElement grandChild = _children[i].GetChildById(name);
+                Element grandChild = _children[i].GetChildById(name);
                 if (grandChild != null) return grandChild;
             }
             return null;
@@ -154,6 +162,7 @@ namespace EditorX
                 _children[i].Draw();
             }
         }
+        
         protected virtual void HandleEvents()
         {
             Event e = Event.current;
@@ -168,14 +177,14 @@ namespace EditorX
             if (e.type == EventType.MouseUp) CallEvent("mouseup");
 
         }
-
+        
         public virtual void Draw()
         {
             PreGUI();
             OnGUI();
             PostGUI();
         }
-
+        
         public void AddEventListener(string eventType, EventCallback callback)
         {
             eventType = eventType.ToLower();
@@ -196,7 +205,7 @@ namespace EditorX
                 _eventHandlers[eventType] -= callback;
             }
         }
-
+        
         public virtual void OnWindowLostFocus()
         {
             for(int i = 0; i < _children.Count; i += 1)
@@ -212,32 +221,43 @@ namespace EditorX
                 _children[i].OnWindowFocus();
             }
         }
-
-        protected abstract SerializedElement ToSerialized();
-        protected abstract void FromSerialized(SerializedElement serial);
-
-        public void OnSerialize(SerializedElementQueue list)
+        public static T Create<T>() where T : Element
         {
-            SerializedElement serial = ToSerialized();
-            list.Enqueue(serial);
-            for (int i = 0; i < _children.Count; i += 1)
+            T elem = ScriptableObject.CreateInstance<T>();
+            return elem;
+        }
+        public static T Create<T>(string name) where T : Element
+        {
+            T elem = ScriptableObject.CreateInstance<T>();
+            elem.name = name;
+            return elem;
+        }
+
+        protected void SerializeEventHandlers()
+        {
+            _serializedDelegates = new List<DelegateSerialization.SerializedDelegate>();
+            var keys = _eventHandlers.Keys;
+            foreach (var key in keys)
             {
-                _children[i].OnSerialize(list);
+                _serializedDelegates.Add(DelegateSerialization.SerializeDelegate(_eventHandlers[key], key));
             }
         }
-        public void OnDeserialize(SerializedElementQueue list)
+        protected void DeserializeEventListeners()
         {
-            Debug.Log("OnDeserialize(" + name + ")");
-            SerializedElement serial = list.Dequeue();
-            if(serial != null)
+            _eventHandlers = new Dictionary<string, EventCallback>();
+            for (int i = 0; i < _serializedDelegates.Count; i += 1)
             {
-                Debug.Log("OnDeserialize(" + name + "): " + serial.ToString());
-                FromSerialized(serial);
+                _eventHandlers.Add(_serializedDelegates[i].eventname, DelegateSerialization.DeserializeDelegate(_serializedDelegates[i]));
             }
-            for (int i = 0; i < _children.Count; i += 1)
-            {
-                _children[i].OnDeserialize(list);
-            }
+        }
+        public virtual void OnBeforeSerialize()
+        {
+            SerializeEventHandlers();
+        }
+
+        public virtual void OnAfterDeserialize()
+        {
+            DeserializeEventListeners();
         }
     }
 }

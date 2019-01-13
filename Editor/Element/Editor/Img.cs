@@ -7,7 +7,9 @@ namespace EditorX
 {
     public class Img : Element
     {
+        [SerializeField]
         Texture _texture;
+        [SerializeField]
         ScaleMode _scaleMode;
 
         public Texture texture
@@ -20,11 +22,6 @@ namespace EditorX
             {
                 _texture = value;
             }
-        }
-        public Img(string name, Texture tex, Style style = null) : base(name, style)
-        {
-            _texture = tex;
-            _scaleMode = ScaleMode.ScaleAndCrop;
         }
 
         public ScaleMode scaleMode
@@ -52,16 +49,6 @@ namespace EditorX
             if(_texture != null) EditorGUI.DrawTextureTransparent(_rect, _texture, _scaleMode);
         }
 
-        protected override SerializedElement ToSerialized()
-        {
-            SerializedElement serial = new SerializedElement();
-            serial.AddReference(new SerializedElement.SerializedObject("tex",_texture));
-            return serial;
-        }
 
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            this._texture = (Texture)serial.GetReference("tex");
-        }
     }
 }

@@ -5,16 +5,26 @@ using UnityEditor;
 
 namespace EditorX
 {
-    public class FloatField : Element, IValueElement
+    public class FloatField : ValueElement
     {
+        [SerializeField]
         float _value;
 
         public System.Type valueType
         {
             get
             {
-                return typeof(Color);
+                return typeof(float);
             }
+        }
+
+        public static FloatField Create(string name, float value = 0)
+        {
+            FloatField field = ScriptableObject.CreateInstance<FloatField>();
+            field.name = name;
+            field._value = value;
+
+            return field;
         }
 
         public override string tag
@@ -25,18 +35,13 @@ namespace EditorX
             }
         }
 
-        public FloatField(string name, Style style = null) : base(name, style)
-        {
-
-        }
-
         protected override void PreGUI()
         {
 
         }
         protected override void OnGUI()
         {
-            GUI.SetNextControlName(_name);
+            GUI.SetNextControlName(name);
             float temp = EditorGUILayout.FloatField(_value, style.layoutOptions);
             if (temp != _value)
             {
@@ -49,32 +54,21 @@ namespace EditorX
 
         }
 
-        public T GetValue<T>()
+        public override T GetValue<T>()
         {
             return (T)(object)_value;
         }
 
-        public object GetValue()
+        public override object GetValue()
         {
             return _value;
         }
 
-        public void SetValue(object val)
+        public override void SetValue(object val)
         {
             _value = (float)val;
         }
 
-        protected override SerializedElement ToSerialized()
-        {
-            SerializedElement serial = new SerializedElement();
-            serial.AddValue(new SerializedElement.SerializedValue("val", _value));
-            return serial;
-        }
-
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            this._value = serial.GetValue("val").GetFloat();
-        }
     }
 
 }

@@ -2,25 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System;
 
 namespace EditorX
 {
-    [System.Serializable]
-    public class ObjectField<T> : Element, IValueElement where T : UnityEngine.Object
+    public class ObjectField : ValueElement
     {
-
-        bool _allowSceneObjects = true;
-        
-        T _value;
-
-        public Type valueType
-        {
-            get
-            {
-                return typeof(T);
-            }
-        }
+        [SerializeField]
+        UnityEngine.Object _value;
+        [SerializeField]
+        string _typeName;
+        System.Type _type;
 
         public override string tag
         {
@@ -30,59 +21,55 @@ namespace EditorX
             }
         }
 
-        public ObjectField(string name, Style style = null) : base(name, style)
+        public static ObjectField Create(string name, System.Type type)
         {
+            ObjectField field = ScriptableObject.CreateInstance<ObjectField>();
+            field.name = name;
+            field._type = type;
 
+            return field;
         }
-        protected override void InitializeGUIStyle()
+
+        public override T GetValue<T>()
         {
-            if (style.guistyle == null) this.style.guistyle = GUI.skin.textField;
+            return (T)(object)_value;
+        }
+
+        public override object GetValue()
+        {
+            return _value;
+        }
+
+        public override void SetValue(object val)
+        {
+            _value = (UnityEngine.Object)val;
         }
 
         protected override void PreGUI()
         {
-            InitializeGUIStyle();
+
         }
+
         protected override void OnGUI()
         {
-            GUI.SetNextControlName(_name);
-            T temp = (T)EditorGUILayout.ObjectField(_value, typeof(T), _allowSceneObjects, style.layoutOptions);
+            GUI.SetNextControlName(name);
+            UnityEngine.Object temp = EditorGUILayout.ObjectField(_value, _type, true, style.layoutOptions);
             if (temp != _value)
             {
                 _value = temp;
                 CallEvent("change");
             }
         }
-        protected override void PostGUI()
-        {
 
-        }
-
-        public T1 GetValue<T1>()
+        public override void OnBeforeSerialize()
         {
-            return (T1)(object)_value;
+            base.OnBeforeSerialize();
+            _typeName = _type.AssemblyQualifiedName;
         }
-
-        public object GetValue()
+        public override void OnAfterDeserialize()
         {
-            return _value;
-        }
-
-        public void SetValue(object val)
-        {
-            _value = (T)val;
-        }
-        protected override SerializedElement ToSerialized()
-        {
-            SerializedElement serial = new SerializedElement();
-            serial.AddReference(new SerializedElement.SerializedObject("val", _value));
-            return serial;
-        }
-
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            this._value = (T)serial.GetReference("val");
+            base.OnAfterDeserialize();
+            _type = System.Type.GetType(_typeName);
         }
     }
-
 }

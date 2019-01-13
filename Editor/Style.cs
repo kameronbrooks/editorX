@@ -5,13 +5,24 @@ using UnityEditor;
 
 namespace EditorX
 {
-    public class Style
+    [System.Serializable]
+    public class Style: ISerializationCallbackReceiver
     {
+        
         Dictionary<string, object> _data;
+        [SerializeField]
+        byte[] _serializedData;
+        [SerializeField]
+        List<UnityEngine.Object> _serializedObjects;
+
+        [SerializeField]
         List<GUILayoutOption> _layoutOptionsList;
+        [SerializeField]
         GUILayoutOption[] _layoutOptions;
         bool _isDirty = false;
+        [SerializeField]
         GUIStyle _guiStyle;
+        [SerializeField]
         Color _bgColor;
 
         public Color backgroundColor
@@ -103,9 +114,9 @@ namespace EditorX
             set
             {
                 property = property.ToLower();
+                if (value != null && value.GetType() == typeof(int) && property != "font-size") value = (float)(int)value;
                 if (_data.ContainsKey(property))
-                {
-                    //if (_data[property].Equals(value)) return;
+                {                 
                     _data[property] = value;
                 }
                 else
@@ -215,6 +226,129 @@ namespace EditorX
             _layoutOptions = _layoutOptionsList.ToArray();
             _isDirty = false;
         }
+
+        protected void SerializeProperty(string name, object property, List<byte> buffer)
+        {
+            buffer.AddRange(BinarySerializer.GetBytes(name));
+            int objectIndex = -1;
+            switch (name)
+            {
+                case "font":
+                    _serializedObjects.Add((UnityEngine.Object)property);
+                    objectIndex = _serializedObjects.Count - 1;
+                    break;
+                case "background":
+                    _serializedObjects.Add((UnityEngine.Object)property);
+                    objectIndex = _serializedObjects.Count - 1;
+                    break;
+
+                default:
+                    break;
+            }
+            if(objectIndex >= 0)
+            {
+                buffer.AddRange(BinarySerializer.GetBytes(objectIndex));
+            } 
+            else
+            {
+                buffer.AddRange(BinarySerializer.GetBytes(property));
+            }
+            
+        }
+        protected void DeserializeProperty(byte[] bytes, ref int index)
+        {
+            string propname = BinarySerializer.GetString(bytes, ref index);
+            object value = null;
+
+            switch(propname)
+            {
+                case "width":
+                    value = BinarySerializer.GetFloat(bytes, ref index);
+                    break;
+                case "height":
+                    value = BinarySerializer.GetFloat(bytes, ref index);
+                    break;
+                case "background-color":
+                    value = BinarySerializer.GetColor(bytes, ref index);
+                    break;
+                case "font":
+                    value = _serializedObjects[BinarySerializer.GetInt(bytes, ref index)];
+                    break;
+                case "font-style":
+                    value = (FontStyle)BinarySerializer.GetEnum(bytes, typeof(FontStyle), ref index);
+                    break;
+                case "alignment":
+                    value = (TextAlignment)BinarySerializer.GetEnum(bytes, typeof(TextAlignment), ref index);
+                    break;
+                case "image-position":
+                    value = (ImagePosition)BinarySerializer.GetEnum(bytes, typeof(ImagePosition), ref index);
+                    break;
+                case "margin":
+                    value = BinarySerializer.GetRectOffset(bytes, ref index);
+                    break;
+                case "padding":
+                    value = BinarySerializer.GetRectOffset(bytes, ref index);
+                    break;
+                case "color":
+                    value = BinarySerializer.GetColor(bytes, ref index);
+                    break;
+                case "expand-width":
+                    value = BinarySerializer.GetBool(bytes, ref index);
+                    break;
+                case "expand-height":
+                    value = BinarySerializer.GetBool(bytes, ref index);
+                    break;
+                case "min-width":
+                    value = BinarySerializer.GetFloat(bytes, ref index);
+                    break;
+                case "min-height":
+                    value = BinarySerializer.GetFloat(bytes, ref index);
+                    break;
+                case "max-width":
+                    value = BinarySerializer.GetFloat(bytes, ref index);
+                    break;
+                case "max-height":
+                    value = BinarySerializer.GetFloat(bytes, ref index);
+                    break;
+                default:
+                    throw new System.Exception(propname + " is not a supported property name, cannot deserialize");
+            }
+            Debug.Log("Deserializing: " + propname + " = " + value.ToString());
+            _data.Add(propname, value);
+        }
+        public void OnBeforeSerialize()
+        {
+            List<byte> buffer = new List<byte>();
+            _serializedObjects = new List<Object>();
+
+            var keys = _data.Keys;
+            int i = 0;
+            foreach(var key in keys)
+            {
+                Debug.Log("Serializing[" + i +"]: " + key + " = " + _data[key]);
+                // test
+                SerializeProperty(key, _data[key], buffer);
+                i++; 
+
+            }
+            _serializedData = buffer.ToArray();
+            Debug.Log("Serialized Bytes = " + _serializedData.Length);
+        }
+
+        public void OnAfterDeserialize()
+        {
+            _data = new Dictionary<string, object>();
+            if (_serializedData == null) return;
+            int index = 0;
+
+            while(index < _serializedData.Length)
+            {
+                DeserializeProperty(_serializedData, ref index);
+            }
+            _serializedData = null;
+            _isDirty = true;
+        }
+
         public GUILayoutOption[] layoutOptions
         {
             get

@@ -7,8 +7,10 @@ namespace EditorX
 {
     public enum LayoutType { Horizontal, Vertical }
 
+    [System.Serializable]
     public class Div : Element
     {
+        [SerializeField]
         LayoutType _layoutType;
 
 
@@ -18,11 +20,6 @@ namespace EditorX
             {
                 return "div";
             }
-        }
-
-        public Div(string name, LayoutType layoutType = LayoutType.Horizontal, Style style = null) : base(name, style)
-        {
-            _layoutType = layoutType;
         }
 
         protected override void InitializeGUIStyle()
@@ -36,7 +33,7 @@ namespace EditorX
         }
         protected override void OnGUI()
         {
-            GUI.SetNextControlName(_name);
+            GUI.SetNextControlName(name);
             if (_layoutType == LayoutType.Horizontal)
             {
                 _rect = EditorGUILayout.BeginHorizontal(style.layoutOptions);
@@ -66,15 +63,6 @@ namespace EditorX
 
         }
 
-        protected override SerializedElement ToSerialized()
-        {
-            return null;
-        }
-
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            return;
-        }
     }
 
 }

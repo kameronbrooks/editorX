@@ -103,6 +103,15 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.height));
             return buffer.ToArray();
         }
+        public static byte[] GetBytes(RectOffset val)
+        { 
+            List<byte> buffer = new List<byte>();
+            buffer.AddRange(GetBytes(val.left));
+            buffer.AddRange(GetBytes(val.right));
+            buffer.AddRange(GetBytes(val.top));
+            buffer.AddRange(GetBytes(val.bottom));
+            return buffer.ToArray();
+        }
         public static byte[] GetBytes(Quaternion val)
         {
             List<byte> buffer = new List<byte>();
@@ -112,6 +121,13 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.w));
             return buffer.ToArray();
         }
+        public static byte[] GetBytes(System.Enum val, Type enumType)
+        {
+            return GetBytes((int)System.Enum.ToObject(enumType,val));
+        }
+
+        
+        
         public static byte[] GetBytes(object ob)
         {
             Type type = ob.GetType();
@@ -128,7 +144,9 @@ namespace EditorX
             if (type == typeof(Vector4)) return GetBytes((Vector4)ob);
             if (type == typeof(Color)) return GetBytes((Color)ob);
             if (type == typeof(Rect)) return GetBytes((Rect)ob);
+            if (type == typeof(RectOffset)) return GetBytes((RectOffset)ob);
             if (type == typeof(Quaternion)) return GetBytes((Quaternion)ob);
+            if (type.IsEnum) return GetBytes((int)ob);
 
 
             FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public);
@@ -141,63 +159,195 @@ namespace EditorX
         }
 
         
+        public static bool GetBool(byte[] data, ref int index)
+        {
+            bool result = BitConverter.ToBoolean(data, index);
+            index += sizeof(bool);
+            return result;
+        }
+        public static char GetChar(byte[] data, ref int index)
+        {
+            char result = BitConverter.ToChar(data, index);
+            index += sizeof(char);
+            return result;
+        }
+        public static short GetShort(byte[] data, ref int index)
+        {
+            short result = BitConverter.ToInt16(data, index);
+            index += sizeof(short);
+            return result;
+        }
+        public static ushort GetUShort(byte[] data, ref int index)
+        {
+            ushort result = BitConverter.ToUInt16(data, index);
+            index += sizeof(ushort);
+            return result;
+        }
+        public static int GetInt(byte[] data, ref int index)
+        {
+            int result = BitConverter.ToInt32(data, index);
+            index += sizeof(int);
+            return result;
+        }
+        public static System.Enum GetEnum(byte[] data, Type enumType, ref int index)
+        {
+            int result = BitConverter.ToInt32(data, index);
+            index += sizeof(int);
+            return (System.Enum)System.Enum.ToObject(enumType, result);
+        }
+        public static uint GetUInt(byte[] data, ref int index)
+        {
+            uint result = BitConverter.ToUInt32(data, index);
+            index += sizeof(uint);
+            return result;
+        }
+        public static long GetLong(byte[] data, ref int index)
+        {
+            long result = BitConverter.ToInt64(data, index);
+            index += sizeof(long);
+            return result;
+        }
+        public static ulong GetULong(byte[] data, ref int index)
+        {
+            ulong result = BitConverter.ToUInt64(data, index);
+            index += sizeof(ulong);
+            return result;
+        }
+        public static float GetFloat(byte[] data, ref int index)
+        {
+            float result = BitConverter.ToSingle(data, index);
+            index += sizeof(float);
+            return result;
+        }
+        public static double GetDouble(byte[] data, ref int index)
+        {
+            double result = BitConverter.ToDouble(data, index);
+            index += sizeof(double);
+            return result;
+        }
+        public static string GetString(byte[] data, ref int index)
+        {
+            int length = BitConverter.ToInt32(data, index);
+            index += sizeof(int);
+            string result = System.Text.Encoding.Unicode.GetString(data, index, length * sizeof(char));
+            index += length * sizeof(char);
+            return result;
+        }
+        public static Vector2 GetVector2(byte[] data, ref int index)
+        {
+            float x = GetFloat(data, ref index);
+            float y = GetFloat(data, ref index);
+            return new Vector2(x, y);
+        }
+        public static Vector3 GetVector3(byte[] data, ref int index)
+        {
+            float x = GetFloat(data, ref index);
+            float y = GetFloat(data, ref index);
+            float z = GetFloat(data, ref index);
+            return new Vector3(x, y, z);
+        }
+        public static Vector4 GetVector4(byte[] data, ref int index)
+        {
+            float x = GetFloat(data, ref index);
+            float y = GetFloat(data, ref index);
+            float z = GetFloat(data, ref index);
+            float w = GetFloat(data, ref index);
+            return new Vector4(x, y, z, w);
+        }
+        public static Color GetColor(byte[] data, ref int index)
+        {
+            float x = GetFloat(data, ref index);
+            float y = GetFloat(data, ref index);
+            float z = GetFloat(data, ref index);
+            float w = GetFloat(data, ref index);
+            return new Color(x, y, z, w);
+        }
+        public static Rect GetRect(byte[] data, ref int index)
+        {
+            float x = GetFloat(data, ref index);
+            float y = GetFloat(data, ref index);
+            float z = GetFloat(data, ref index);
+            float w = GetFloat(data, ref index);
+            return new Rect(x, y, z, w);
+        }
+        public static RectOffset GetRectOffset(byte[] data, ref int index)
+        {
+            int x = GetInt(data, ref index);
+            int y = GetInt(data, ref index);
+            int z = GetInt(data, ref index);
+            int w = GetInt(data, ref index);
+            return new RectOffset(x, y, z, w);
+        }
+        public static Quaternion GetQuaternion(byte[] data, ref int index)
+        {
+            float x = GetFloat(data, ref index);
+            float y = GetFloat(data, ref index);
+            float z = GetFloat(data, ref index);
+            float w = GetFloat(data, ref index);
+            return new Quaternion(x, y, z, w);
+        }
         public static object GetPrimitive(byte[] data, Type type, ref int index)
         {
-            if (type == typeof(bool)) {
-                object result = BitConverter.ToBoolean(data, index);
-                index += sizeof(bool);
-                return result;
-            }
-            if (type == typeof(int))
+            if (type == typeof(bool)) return GetBool(data, ref index);
+            if (type == typeof(char)) return GetBool(data, ref index);
+            if (type == typeof(short)) return GetShort(data, ref index);
+            if (type == typeof(ushort)) return GetUShort(data, ref index);
+            if (type == typeof(int)) return GetInt(data, ref index);
+            if (type == typeof(uint)) return GetUInt(data, ref index);
+            if (type == typeof(long)) return GetLong(data, ref index);
+            if (type == typeof(ulong)) return GetULong(data, ref index);
+            if (type == typeof(float)) return GetFloat(data, ref index);
+            if (type == typeof(double)) return GetDouble(data, ref index);
+            if (type == typeof(string)) return GetString(data, ref index);
+            if (type == typeof(Vector2))
             {
-                object result = BitConverter.ToInt32(data, index);
-                index += sizeof(int);
-                return result;
+                float x = GetFloat(data, ref index);
+                float y = GetFloat(data, ref index);
+                return new Vector2(x, y);
             }
-            if (type == typeof(uint))
+            if (type == typeof(Vector3))
             {
-                object result = BitConverter.ToUInt32(data, index);
-                index += sizeof(uint);
-                return result;
+                float x = GetFloat(data, ref index);
+                float y = GetFloat(data, ref index);
+                float z = GetFloat(data, ref index);
+                return new Vector3(x, y, z);
             }
-            if (type == typeof(long))
+            if (type == typeof(Vector4))
             {
-                object result = BitConverter.ToInt64(data, index);
-                index += sizeof(long);
-                return result;
+                float x = GetFloat(data, ref index);
+                float y = GetFloat(data, ref index);
+                float z = GetFloat(data, ref index);
+                float w = GetFloat(data, ref index);
+                return new Vector4(x, y, z, w);
             }
-            if (type == typeof(ulong))
+            if (type == typeof(Color))
             {
-                object result = BitConverter.ToUInt64(data, index);
-                index += sizeof(ulong);
-                return result;
+                float x = GetFloat(data, ref index);
+                float y = GetFloat(data, ref index);
+                float z = GetFloat(data, ref index);
+                float w = GetFloat(data, ref index);
+                return new Color(x, y, z, w);
             }
-            if (type == typeof(float))
+            if (type == typeof(Rect))
             {
-                object result = BitConverter.ToSingle(data, index);
-                index += sizeof(float);
-                return result;
+                float x = GetFloat(data, ref index);
+                float y = GetFloat(data, ref index);
+                float z = GetFloat(data, ref index);
+                float w = GetFloat(data, ref index);
+                return new Rect(x, y, z, w);
             }
-            if (type == typeof(double))
+            if (type == typeof(RectOffset)) return GetRectOffset(data, ref index);
+            if (type == typeof(Quaternion))
             {
-                object result = BitConverter.ToDouble(data, index);
-                index += sizeof(double);
-                return result;
-            }
-            if (type == typeof(string))
-            {
-                int length = BitConverter.ToInt32(data, index);
-                Debug.Log("String: length = " + length);
-                index += sizeof(int);
-                Debug.Log("String: bytes = " + data.Length);
-                object result = BitConverter.ToString(data, index, length * sizeof(char));
-                index += length * sizeof(char);
-                return result;
+                float x = GetFloat(data, ref index);
+                float y = GetFloat(data, ref index);
+                float z = GetFloat(data, ref index);
+                float w = GetFloat(data, ref index);
+                return new Quaternion(x, y, z, w);
             }
             if (type.IsArray)
             {
-                int length = BitConverter.ToInt32(data, index);
-                index += sizeof(int);
+                int length = GetInt(data, ref index);
                 IList list = Array.CreateInstance(type.GetElementType(), length);
                 for(int i = 0; i < length; i += 1)
                 {

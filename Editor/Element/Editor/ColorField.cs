@@ -6,7 +6,7 @@ using System;
 
 namespace EditorX
 {
-    public class ColorField : Element, IValueElement
+    public class ColorField : ValueElement
     {
         Color _value;
 
@@ -26,18 +26,13 @@ namespace EditorX
             }
         }
 
-        public ColorField(string name, Style style = null) : base(name, style)
-        {
-
-        }
-
         protected override void PreGUI()
         {
 
         }
         protected override void OnGUI()
         {
-            GUI.SetNextControlName(_name);
+            GUI.SetNextControlName(name);
             Color temp = EditorGUILayout.ColorField(_value, style.layoutOptions);
             if (temp != _value)
             {
@@ -50,31 +45,21 @@ namespace EditorX
 
         }
 
-        public T GetValue<T>()
+        public override T GetValue<T>()
         {
             return (T)(object)_value;
         }
 
-        public object GetValue()
+        public override object GetValue()
         {
             return _value;
         }
 
-        public void SetValue(object val)
+        public override void SetValue(object val)
         {
             _value = (Color)val;
         }
 
-        protected override SerializedElement ToSerialized()
-        {
-            SerializedElement serial = new SerializedElement();
-            serial.AddValue(new SerializedElement.SerializedValue("val", _value));
-            return serial;
-        }
 
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            this._value = serial.GetValue("val").GetObject<Color>();
-        }
     }
 }

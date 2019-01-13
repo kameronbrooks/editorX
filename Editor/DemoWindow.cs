@@ -3,31 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using EditorX;
+using System;
 
 public class DemoWindow : EditorX.Window {
 
-    TextBox _textbox;  
-    IElement _div;
-    IElement _button;
-    IElement _intField;
+    Element floatField;
     Img _img;
     ImageButton _imageButton;
     Texture _texture;
-
-    
-
-    private void Obfield_onChange(IElement elem, Event e)
-    {
-        IValueElement valueElem = elem as IValueElement;
-        _imageButton.img = valueElem.GetValue<Texture>();
-        _img.texture = valueElem.GetValue<Texture>();
-    }
-
-    private void Button_onMouseEvent(IElement elem, Event e)
-    {
-        Debug.Log("Haha");
-        
-    }
 
     [MenuItem("Tools/Test")]
     public static void Main()
@@ -51,14 +34,37 @@ public class DemoWindow : EditorX.Window {
         
     }
 
+    protected override void PreGUI()
+    {
+        base.PreGUI();
+        if(GUILayout.Button("Refresh"))
+        {
+            Unload();
+            Repaint();
+        }
+    }
+
     public override void OnLoadWindow()
     {
-        _intField = new IntField("int", new Style(
-            "width", 100
-            ));
+        floatField = ObjectField.Create("object", typeof(Texture2D));
+        //
+        body.AddChild(floatField);
+        body.AddChild(NewElement<ColorField>("colors"));
+        _img = NewElement<Img>("image");
+        _img.texture = Texture2D.whiteTexture;
+        _img.style["width"] = 300.0f;
+        _img.style["height"] = 300.0f;
 
-        body.AddChild(_intField);
+        body.GetChildById("colors").style["width"] = 300;
+        body.AddChild(_img);
+
+        floatField.AddEventListener("change", Callback);
 
     }
 
+    private void Callback(Element elem, Event evnt)
+    {
+        ValueElement valElem = (ValueElement)elem;
+        ((Img)_img).texture = valElem.GetValue<Texture>();
+    }
 }

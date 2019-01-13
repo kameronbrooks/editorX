@@ -5,13 +5,11 @@ using UnityEditor;
 
 namespace EditorX
 {
+    [System.Serializable]
     public class ImageButton : Element
     {
+        [SerializeField]
         Texture _img;
-        public ImageButton(string name, Texture img, Style style = null) : base(name, style)
-        {
-            _img = img;
-        }
 
         public Texture img
         {
@@ -42,7 +40,7 @@ namespace EditorX
         {
             Event e = Event.current;
 
-            GUI.SetNextControlName(_name);
+            GUI.SetNextControlName(name);
 
             if (GUI.Button(_rect, _img, style.guistyle))
             {
@@ -51,19 +49,6 @@ namespace EditorX
 
 
         }
-
-        protected override SerializedElement ToSerialized()
-        {
-            SerializedElement serial = new SerializedElement();
-            serial.AddReference(new SerializedElement.SerializedObject("tex", _img));
-            return serial;
-        }
-
-        protected override void FromSerialized(SerializedElement serial)
-        {
-            this._img = (Texture)serial.GetReference("tex");
-        }
-
 
     }
 }

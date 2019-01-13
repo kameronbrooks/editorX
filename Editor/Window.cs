@@ -8,13 +8,16 @@ namespace EditorX
     [System.Serializable]
     public abstract class Window : EditorWindow, ISerializationCallbackReceiver
     {
-        [SerializeField]
-        private SerializedElementQueue _serializedElements;
 
-        IElement _body;
+        [SerializeField]
+        Element _body;
+        [SerializeField]
         private bool _isLoaded = false;
         protected abstract void OnOpen();
-        protected abstract void OnClose();
+        protected virtual void OnClose()
+        {
+            Unload();
+        }
         //protected abstract void Draw();
         protected virtual void PreGUI()
         {
@@ -22,7 +25,7 @@ namespace EditorX
         }
         protected virtual void PostGUI()
         {
-
+            
         }
 
         public abstract void OnLoadWindow();
@@ -31,26 +34,19 @@ namespace EditorX
         {
             if (!_isLoaded)
             {
-                _body = new Container("body", this);
+                _body = NewElement<Container>("body");
+                ((Container)_body).window = this;
                 OnLoadWindow();
                 _isLoaded = true;
-
-                Debug.Log(_serializedElements);
-                if (_serializedElements != null && _serializedElements.Count > 0)
-                {
-                    if (_serializedElements != null) Debug.Log("Load(): serialized elements  " + _serializedElements.Count);
-                    _body.OnDeserialize(_serializedElements);
-                }
             }   
             
         }
         public void Unload()
         {
+            _body.Unload();
             _isLoaded = false;
         }
-
-
-        protected IElement body
+        protected Element body
         {
             get
             {
@@ -94,19 +90,24 @@ namespace EditorX
 
         public void OnBeforeSerialize()
         {
-            Debug.Log("Serializing  ");
-            if (_serializedElements == null) _serializedElements = new SerializedElementQueue();
-            _serializedElements.Clear();
-            _body.OnSerialize(_serializedElements);
-            Debug.Log("OnBeforeSerialize: " + _serializedElements.Count + " Elements");
+
         }
 
 
         public void OnAfterDeserialize()
         {
-            Debug.Log("OnDeserialize  " + _serializedElements.ToString());
-            _isLoaded = false;
             
+        }
+
+        public static T NewElement<T>() where T:Element
+        {
+            T elem = Element.Create<T>();
+            return elem;
+        }
+        public static T NewElement<T>(string name) where T : Element
+        {
+            T elem = Element.Create<T>(name);
+            return elem;
         }
     }
 
