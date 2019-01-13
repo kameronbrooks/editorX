@@ -38,10 +38,21 @@ namespace EditorX
             }
         }
 
+        protected override void InitializeGUIStyle()
+        {
+            if (style.guistyle == null) this.style.guistyle = new GUIStyle(GUI.skin.label);
+        }
 
+        
         protected override void OnGUI()
-        {         
+        {
+            object fontSize = style["font-size"];
+            if (fontSize != null)
+            {
+                _rect.height = Mathf.Max(_rect.height, (int)fontSize+5);
+            }
             EditorGUI.LabelField(_rect, _text, style.guistyle);
+
         }
 
     }

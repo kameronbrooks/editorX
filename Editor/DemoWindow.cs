@@ -18,11 +18,6 @@ public class DemoWindow : EditorX.Window {
         DemoWindow window = EditorWindow.GetWindow<DemoWindow>();     
     }
 
-    public void OnEnable()
-    {
-
-    }
-
 
     protected override void OnOpen()
     {
@@ -49,9 +44,11 @@ public class DemoWindow : EditorX.Window {
         floatField = ObjectField.Create("object", typeof(Texture2D));
         //
         body.AddChild(floatField);
-        body.AddChild(NewElement<ColorField>("colors"));
+        ValueElement color = (ValueElement)body.AddChild(NewElement<ColorField>("colors"));
+        color.SetLabel("Color", "tool tip");
         _img = NewElement<Img>("image");
         _img.texture = Texture2D.whiteTexture;
+
         _img.style["width"] = 300.0f;
         _img.style["height"] = 300.0f;
 
@@ -59,6 +56,10 @@ public class DemoWindow : EditorX.Window {
         body.AddChild(_img);
 
         floatField.AddEventListener("change", Callback);
+
+        Element node = body.AddText("This is some text");
+        node.style["color"] = Color.red;
+        node.style["font-size"] = 40;
 
     }
 

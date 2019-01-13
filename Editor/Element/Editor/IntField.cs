@@ -2,27 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System;
 
 namespace EditorX
 {
-    public class ColorField : ValueElement
+    public class IntField : ValueElement
     {
-        Color _value;
+        [SerializeField]
+        int _value;
 
-        public Type valueType
+        public System.Type valueType
         {
             get
             {
-                return typeof(Color);
+                return typeof(float);
             }
         }
+
+        public static IntField Create(string name, int value = 0)
+        {
+            IntField field = ScriptableObject.CreateInstance<IntField>();
+            field.name = name;
+            field._value = value;
+
+            return field;
+        }
+
+
 
         public override string tag
         {
             get
             {
-                return "color";
+                return "int";
             }
         }
 
@@ -33,9 +44,9 @@ namespace EditorX
         protected override void OnGUI()
         {
             GUI.SetNextControlName(name);
-            Color temp = (_label != null) ?
-                EditorGUILayout.ColorField(_label, _value, style.layoutOptions) :
-                EditorGUILayout.ColorField(_value, style.layoutOptions);
+            int temp = (_label != null) ?
+                EditorGUILayout.IntField(_label, _value, style.guistyle, style.layoutOptions):
+                EditorGUILayout.IntField(_value, style.guistyle, style.layoutOptions);
             if (temp != _value)
             {
                 _value = temp;
@@ -59,9 +70,9 @@ namespace EditorX
 
         public override void SetValue(object val)
         {
-            _value = (Color)val;
+            _value = (int)val;
         }
 
-
     }
+
 }

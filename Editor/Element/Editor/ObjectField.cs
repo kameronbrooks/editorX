@@ -12,12 +12,26 @@ namespace EditorX
         [SerializeField]
         string _typeName;
         System.Type _type;
+        [SerializeField]
+        bool _allowSceneObjects = true;
 
         public override string tag
         {
             get
             {
                 return "object";
+            }
+        }
+
+        public bool allowSceneObjects
+        {
+            get
+            {
+                return _allowSceneObjects;
+            }
+            set
+            {
+                _allowSceneObjects = value;
             }
         }
 
@@ -53,7 +67,10 @@ namespace EditorX
         protected override void OnGUI()
         {
             GUI.SetNextControlName(name);
-            UnityEngine.Object temp = EditorGUILayout.ObjectField(_value, _type, true, style.layoutOptions);
+            UnityEngine.Object temp = (_label != null) ?
+                EditorGUILayout.ObjectField(_label, _value, _type, _allowSceneObjects, style.layoutOptions) :
+                EditorGUILayout.ObjectField( _value, _type, _allowSceneObjects, style.layoutOptions);
+
             if (temp != _value)
             {
                 _value = temp;

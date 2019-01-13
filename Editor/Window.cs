@@ -14,10 +14,7 @@ namespace EditorX
         [SerializeField]
         private bool _isLoaded = false;
         protected abstract void OnOpen();
-        protected virtual void OnClose()
-        {
-            Unload();
-        }
+        protected abstract void OnClose();
         //protected abstract void Draw();
         protected virtual void PreGUI()
         {
@@ -26,6 +23,11 @@ namespace EditorX
         protected virtual void PostGUI()
         {
             
+        }
+
+        protected virtual void OnEditorUpdate()
+        {
+
         }
 
         public abstract void OnLoadWindow();
@@ -43,7 +45,7 @@ namespace EditorX
         }
         public void Unload()
         {
-            _body.Unload();
+            if(_body != null) _body.Unload();
             _isLoaded = false;
         }
         protected Element body
@@ -58,6 +60,7 @@ namespace EditorX
         public void Open()
         {
             this.Show();
+            EditorApplication.update += OnEditorUpdate;
             OnOpen();
         }
 
@@ -72,6 +75,12 @@ namespace EditorX
             PostGUI();
         }
 
+        public void OnEnable()
+        {
+
+        }
+
+
         public void OnLostFocus()
         {
             if (_body != null) _body.OnWindowLostFocus();
@@ -84,6 +93,8 @@ namespace EditorX
 
         public new void Close()
         {
+            EditorApplication.update -= OnEditorUpdate;
+            Unload();
             OnClose();
             base.Close();
         }

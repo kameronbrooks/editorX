@@ -108,15 +108,16 @@ namespace EditorX
 
         }
 
-        public virtual void AddChild(Element child)
+        public virtual Element AddChild(Element child)
         {
             if (child == null)
             {
                 Debug.LogWarning("No child passed to element");
-                return;
+                return null;
             }
             _children.Add(child);
             child.parent = this;
+            return child;
         }
 
         public virtual void Unload()
@@ -129,9 +130,9 @@ namespace EditorX
             DestroyImmediate(this);
         }
         
-        public virtual void AddText(string text)
+        public virtual TextNode AddText(string text)
         {
-            Element child = TextNode.Create(text);
+            TextNode child = TextNode.Create(text);
             _children.Add(child);
             child.parent = this;
 
@@ -139,7 +140,7 @@ namespace EditorX
             {
                 child.style["color"] = style["color"];
             }
-
+            return child;
         }
         
         public virtual Element GetChildById(string name)

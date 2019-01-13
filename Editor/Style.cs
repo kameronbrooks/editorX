@@ -274,6 +274,9 @@ namespace EditorX
                 case "font":
                     value = _serializedObjects[BinarySerializer.GetInt(bytes, ref index)];
                     break;
+                case "font-size":
+                    value = BinarySerializer.GetInt(bytes, ref index);
+                    break;
                 case "font-style":
                     value = (FontStyle)BinarySerializer.GetEnum(bytes, typeof(FontStyle), ref index);
                     break;
@@ -313,7 +316,6 @@ namespace EditorX
                 default:
                     throw new System.Exception(propname + " is not a supported property name, cannot deserialize");
             }
-            Debug.Log("Deserializing: " + propname + " = " + value.ToString());
             _data.Add(propname, value);
         }
         public void OnBeforeSerialize()
@@ -325,14 +327,11 @@ namespace EditorX
             int i = 0;
             foreach(var key in keys)
             {
-                Debug.Log("Serializing[" + i +"]: " + key + " = " + _data[key]);
-                // test
                 SerializeProperty(key, _data[key], buffer);
                 i++; 
 
             }
             _serializedData = buffer.ToArray();
-            Debug.Log("Serialized Bytes = " + _serializedData.Length);
         }
 
         public void OnAfterDeserialize()
