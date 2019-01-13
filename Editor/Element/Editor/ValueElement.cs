@@ -59,5 +59,15 @@ namespace EditorX
         {
             if (style.guistyle == null) this.style.guistyle = new GUIStyle(GUI.skin.textField);
         }
+
+        public override void OnAfterDeserialize()
+        {
+            base.OnAfterDeserialize();
+            if (_label != null && _label.text == "")
+            {
+                _label = null;
+
+            }
+        }
     }
 }

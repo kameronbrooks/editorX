@@ -29,11 +29,10 @@ namespace EditorX
 
         protected override void PreGUI()
         {
-            Debug.Log("");
         }
         protected override void OnGUI()
         {
-            GUI.SetNextControlName(name);
+            if(name != null && name != "") GUI.SetNextControlName(name);
             if (_layoutType == LayoutType.Horizontal)
             {
                 _rect = EditorGUILayout.BeginHorizontal(style.layoutOptions);
@@ -42,9 +41,9 @@ namespace EditorX
                 _rect = EditorGUILayout.BeginVertical(style.layoutOptions);
             }
 
-            if(_backgroundColor != Color.clear)
+            if(style.backgroundColor != Color.clear)
             {
-                EditorGUI.DrawRect(_rect, _backgroundColor);
+                EditorGUI.DrawRect(_rect, style.backgroundColor);
             }
             DrawChildren();
 

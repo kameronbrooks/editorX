@@ -5,35 +5,34 @@ using UnityEditor;
 
 namespace EditorX
 {
-    public class FloatField : ValueElement
+    public class IntSliderField : IntField
     {
         [SerializeField]
-        float _value;
+        int _value;
+        [SerializeField]
+        int _lvalue;
+        [SerializeField]
+        int _rvalue;
 
-        public System.Type valueType
-        {
-            get
-            {
-                return typeof(float);
-            }
-        }
 
-        public static FloatField Create(string name, float value = 0)
+        public static IntSliderField Create(string name, int value = 0, int lval = 0, int rval = 10)
         {
-            FloatField field = ScriptableObject.CreateInstance<FloatField>();
+            IntSliderField field = ScriptableObject.CreateInstance<IntSliderField>();
             field.name = name;
             field._value = value;
+            field._lvalue = lval;
+            field._rvalue = rval;
 
             return field;
         }
 
-        
+
 
         public override string tag
         {
             get
             {
-                return "float";
+                return "intslider";
             }
         }
 
@@ -44,9 +43,9 @@ namespace EditorX
         protected override void OnGUI()
         {
             if (name != null && name != "") GUI.SetNextControlName(name);
-            float temp = (_label != null) ?
-                EditorGUILayout.FloatField(_label, _value, style.guistyle, style.layoutOptions) :
-                EditorGUILayout.FloatField(_value, style.guistyle, style.layoutOptions);
+            int temp = (_label != null) ?
+                EditorGUILayout.IntSlider(_label, _value, _lvalue, _rvalue, style.layoutOptions) :
+                EditorGUILayout.IntSlider(_value, _lvalue, _rvalue, style.layoutOptions);
             if (temp != _value)
             {
                 _value = temp;
@@ -70,7 +69,7 @@ namespace EditorX
 
         public override void SetValue(object val)
         {
-            _value = (float)val;
+            _value = (int)val;
         }
 
     }

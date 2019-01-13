@@ -40,7 +40,7 @@ namespace EditorX
         {
             Event e = Event.current;
 
-            GUI.SetNextControlName(name);
+            if (name != null && name != "") GUI.SetNextControlName(name);
 
             if (GUI.Button(_rect, _img, style.guistyle))
             {

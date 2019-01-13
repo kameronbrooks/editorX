@@ -16,7 +16,7 @@ namespace EditorX
         protected List<Element> _children;
         protected Rect _rect;
         protected Dictionary<string, object> _styleData;
-        protected Color _backgroundColor;
+
         [System.NonSerialized]
         private Dictionary<string, EventCallback> _eventHandlers;
         [SerializeField]
@@ -92,13 +92,11 @@ namespace EditorX
 
         protected virtual void InitializeGUIStyle()
         {
-
+            style.guistyle = new GUIStyle();
         }
 
         protected virtual void PreGUI()
-        {
-            InitializeGUIStyle();
-            
+        {          
             _rect = EditorGUILayout.GetControlRect(_style.layoutOptions);
         }
         protected abstract void OnGUI();
@@ -181,6 +179,7 @@ namespace EditorX
         
         public virtual void Draw()
         {
+            InitializeGUIStyle();
             PreGUI();
             OnGUI();
             PostGUI();
@@ -188,6 +187,15 @@ namespace EditorX
         
         public void AddEventListener(string eventType, EventCallback callback)
         {
+            if(callback == null)
+            {
+                Debug.LogWarning("Cannot add null callback");
+                return;
+            }
+            // Make sure that delegate target is a UnityEngine.Object
+            UnityEngine.Object targ = callback.Target as UnityEngine.Object;
+            if (targ == null) Debug.LogWarning("[" + callback.Method.Name + "] Callback target type is not derived from UnityEngine.Object, callback will not be serialized. This callback will be lost when assembly reloads.");
+
             eventType = eventType.ToLower();
             if(_eventHandlers.ContainsKey(eventType))
             {

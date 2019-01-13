@@ -14,7 +14,7 @@ namespace EditorX
         {
             get
             {
-                return typeof(float);
+                return typeof(int);
             }
         }
 
@@ -43,7 +43,7 @@ namespace EditorX
         }
         protected override void OnGUI()
         {
-            GUI.SetNextControlName(name);
+            if (name != null && name != "") GUI.SetNextControlName(name);
             int temp = (_label != null) ?
                 EditorGUILayout.IntField(_label, _value, style.guistyle, style.layoutOptions):
                 EditorGUILayout.IntField(_value, style.guistyle, style.layoutOptions);

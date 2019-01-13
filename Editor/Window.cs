@@ -34,8 +34,9 @@ namespace EditorX
 
         protected void Load()
         {
-            if (!_isLoaded)
+            if (!_isLoaded || _body == null)
             {
+
                 _body = NewElement<Container>("body");
                 ((Container)_body).window = this;
                 OnLoadWindow();
