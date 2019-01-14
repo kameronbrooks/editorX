@@ -22,7 +22,7 @@ public class DemoWindow : EditorX.Window {
     protected override void OnOpen()
     {
         Debug.Log("Starting");
-        this.reloadOnAssemblyReload = true;
+        
     }
 
     protected override void OnClose()
@@ -30,27 +30,35 @@ public class DemoWindow : EditorX.Window {
         
     }
 
+
     protected override void PreGUI()
-    {
+    {       
         base.PreGUI();
-        if(GUILayout.Button("Refresh"))
+        this.reloadOnAssemblyReload = true;
+        if (GUILayout.Button("Refresh"))
         {
             Unload();
             Repaint();
         }
+    }
+    protected override void PostGUI()
+    {
+        base.PostGUI();
     }
 
     public override void OnLoadWindow()
     {
         
         string src = @"
-<div layout-type='vertical'>
+<div>
     <intfield change='Change_Test'></intfield>
-    <div>
-        <intfield></intfield>
-        <floatfield></floatfield>
+    <div layout-type='vertical' color='#FFFFFF'>
+        This is some text.
+        <intfield name='int1'></intfield>
+        <floatfield name='float1' hidden='true'></floatfield>
+        This is some text.
     </div>
-    <img width='300' height='300' texture='Assets/EditorX/Demo/ccl.jpg'></img>
+    <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg'></img>
 </div>
 ";
         LoadFromMarkup(src);

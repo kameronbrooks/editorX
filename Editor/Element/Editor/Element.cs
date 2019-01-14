@@ -16,6 +16,8 @@ namespace EditorX
         protected List<Element> _children;
         protected Rect _rect;
         protected Dictionary<string, object> _styleData;
+        [SerializeField]
+        private bool _visible = true;
 
         [System.NonSerialized]
         private Dictionary<string, EventCallback> _eventHandlers;
@@ -69,7 +71,31 @@ namespace EditorX
             get;
         }
 
-        
+        protected bool visible
+        {
+            get
+            {
+                return _visible;
+            }
+
+            set
+            {
+                _visible = value;
+            }
+        }
+        protected bool hidden
+        {
+            get
+            {
+                return !_visible;
+            }
+
+            set
+            {
+                _visible = !value;
+            }
+        }
+
         protected bool CallEvent(string eventName)
         {
             EventCallback handler = null;
@@ -88,6 +114,7 @@ namespace EditorX
             if(_rect == null) _rect = new Rect();
             if(_parent == null) _parent = null;
             if(_eventHandlers == null) _eventHandlers = new Dictionary<string, EventCallback>();
+
         }
 
         protected virtual void InitializeGUIStyle()
@@ -179,10 +206,13 @@ namespace EditorX
         
         public virtual void Draw()
         {
-            InitializeGUIStyle();
-            PreGUI();
-            OnGUI();
-            PostGUI();
+            if(_visible)
+            {
+                InitializeGUIStyle();
+                PreGUI();
+                OnGUI();
+                PostGUI();
+            }           
         }
         
         public void AddEventListener(string eventType, EventCallback callback)
@@ -282,11 +312,29 @@ namespace EditorX
 
         public virtual bool SetProperty(string name, object value)
         {
-            return false;
+            switch(name)
+            {
+                case "visible":
+                    _visible = (value.GetType() == typeof(bool)) ? (bool)value : System.Boolean.Parse(value.ToString());
+                    return true;
+                case "hidden":
+                    _visible = (value.GetType() == typeof(bool)) ? !(bool)value : !System.Boolean.Parse(value.ToString());
+                    return true;
+                default:
+                    return false;
+            }
         }
         public virtual object GetProperty(string name)
         {
-            return null;
+            switch (name)
+            {
+                case "visible":
+                    return _visible;
+                case "hidden":
+                    return !_visible;
+                default:
+                    return null;
+            }
         }
     }
 }

@@ -50,5 +50,57 @@ namespace EditorX
 
         }
 
+        public override bool SetProperty(string name, object value)
+        {
+            if (base.SetProperty(name, value)) return true;
+
+            switch (name)
+            {
+                case "texture":
+                case "img":
+                    if (value as Texture != null)
+                    {
+                        _img = (Texture)value;
+                    }
+                    else
+                    {
+                        Texture temp = AssetDatabase.LoadAssetAtPath<Texture>(value.ToString());
+                        if (temp != null)
+                        {
+                            _img = temp;
+                        }
+                        else
+                        {
+                            Debug.LogError("EditorX failed to load image: No texture located at " + value.ToString());
+                        }
+                    }
+
+                    return true;
+
+                default:
+                    return false;
+
+            }
+        }
+        public override object GetProperty(string name)
+        {
+            object result = base.GetProperty(name);
+
+            if (result != null) return result;
+
+            switch (name)
+            {
+                case "texture":
+                case "img":
+                    result = _img;
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
+
     }
 }

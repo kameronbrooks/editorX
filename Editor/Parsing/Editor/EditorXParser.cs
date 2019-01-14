@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace EditorX
 {
@@ -97,7 +98,16 @@ namespace EditorX
                 }
                 else
                 {
-                    throw new System.Exception("Unexpected char: " + Peek() + " in UI code");
+                    Tag textNode = ParseMiscText();
+                    if (_tagStack.Count > 0)
+                    {
+                        _tagStack.Peek().AddChild(textNode);
+                    }
+                    else
+                    {
+                        tagList.Add(textNode);
+                    }
+                    
                 }
             }
             return tagList.ToArray();
@@ -182,6 +192,22 @@ namespace EditorX
             CullWhiteSpace();
             Require('>');
             return tag;
+        }
+
+        protected Tag ParseMiscText()
+        {
+            System.Text.StringBuilder builder = new System.Text.StringBuilder();
+            while (Peek() != '<')
+            {
+                builder.Append(Step());
+            }
+            string res = builder.ToString();
+            Regex stripWhiteSpace = new Regex(@"\s+");
+            res = stripWhiteSpace.Replace(res, " ");
+            Tag tag = new Tag() { type = "textnode" };
+            tag.AddAttribute("innerText", res);
+            return tag;
+            
         }
 
         protected Element CreateTree(Tag tag)
