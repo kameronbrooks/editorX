@@ -62,6 +62,49 @@ namespace EditorX
 
         }
 
+        public override bool SetProperty(string name, object value)
+        {
+            if (base.SetProperty(name, value)) return true;
+
+            switch(name)
+            {
+                case "layout-type":
+                case "layouttype":
+                    if(value.GetType() == typeof(LayoutType))
+                    {
+                        _layoutType = (LayoutType)value;
+                    }
+                    else
+                    {
+                        _layoutType = (LayoutType)System.Enum.Parse(typeof(LayoutType), value.ToString(), true);
+                    }
+                    
+                    return true;
+
+                default:
+                    return false;
+
+            }
+        }
+        public override object GetProperty(string name)
+        {
+            object result = base.GetProperty(name);
+
+            if (result != null) return result;
+
+            switch(name)
+            {
+                case "layout-type":
+                case "layouttype":
+                    result = _layoutType;
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
     }
 
 }

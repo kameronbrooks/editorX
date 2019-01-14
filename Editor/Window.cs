@@ -13,6 +13,9 @@ namespace EditorX
         Element _body;
         [SerializeField]
         private bool _isLoaded = false;
+        [SerializeField]
+        private bool _reloadOnAssemblyReload = false;
+
         protected abstract void OnOpen();
         protected abstract void OnClose();
         //protected abstract void Draw();
@@ -57,6 +60,18 @@ namespace EditorX
             }
         }
 
+        public bool reloadOnAssemblyReload
+        {
+            get
+            {
+                return _reloadOnAssemblyReload;
+            }
+
+            set
+            {
+                _reloadOnAssemblyReload = value;
+            }
+        }
 
         public void Open()
         {
@@ -102,7 +117,19 @@ namespace EditorX
 
         public void OnBeforeSerialize()
         {
+            if (_reloadOnAssemblyReload) _isLoaded = false;
+        }
 
+        public void LoadFromMarkup(string markup, UnityEngine.Object callbackTarget = null)
+        {
+            EditorXParser parser = new EditorXParser();
+            parser.callbackTarget = (callbackTarget != null) ? callbackTarget : this;
+            parser.Initialize();
+            Element[] elements = parser.BuildUI(markup);
+            for (int i = 0; i < elements.Length; i += 1)
+            {
+                body.AddChild(elements[i]);
+            }
         }
 
 

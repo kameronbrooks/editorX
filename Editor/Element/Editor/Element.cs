@@ -241,6 +241,17 @@ namespace EditorX
             elem.name = name;
             return elem;
         }
+        public static Element Create(System.Type type)
+        {
+            Element elem = (Element)ScriptableObject.CreateInstance(type);
+            return elem;
+        }
+        public static Element Create(System.Type type, string name)
+        {
+            Element elem = (Element)ScriptableObject.CreateInstance(type);
+            elem.name = name;
+            return elem;
+        }
 
         protected void SerializeEventHandlers()
         {
@@ -267,6 +278,15 @@ namespace EditorX
         public virtual void OnAfterDeserialize()
         {
             DeserializeEventListeners();
+        }
+
+        public virtual bool SetProperty(string name, object value)
+        {
+            return false;
+        }
+        public virtual object GetProperty(string name)
+        {
+            return null;
         }
     }
 }

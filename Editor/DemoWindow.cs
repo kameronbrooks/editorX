@@ -22,6 +22,7 @@ public class DemoWindow : EditorX.Window {
     protected override void OnOpen()
     {
         Debug.Log("Starting");
+        this.reloadOnAssemblyReload = true;
     }
 
     protected override void OnClose()
@@ -41,33 +42,25 @@ public class DemoWindow : EditorX.Window {
 
     public override void OnLoadWindow()
     {
-        floatField = ObjectField.Create("object", typeof(Texture2D));
-        Element div = Element.Create<Div>("main");
-        div.style["background-color"] = new Color(0, 0, 0, 0.2f);
-        div.style["padding"] = new RectOffset(40, 40, 40, 40);
-
-        div.AddChild(floatField);
-        ValueElement color = (ValueElement)div.AddChild(NewElement<ColorField>("colors"));
-        color.SetLabel("Color", "tool tip");
-        _img = NewElement<Img>("image");
-        _img.texture = Texture2D.whiteTexture;
-
-        _img.style["width"] = 300.0f;
-        _img.style["height"] = 300.0f;
-
-        color.style["width"] = 300;
-        div.AddChild(_img);
-
-        floatField.AddEventListener("change", Callback);
-
-        Element node = body.AddText("This is some text");
-        node.style["color"] = Color.red;
-        //node.style["font-size"] = 40;
-
-        body.AddChild(div);
-
+        
+        string src = @"
+<div layout-type='vertical'>
+    <intfield change='Change_Test'></intfield>
+    <div>
+        <intfield></intfield>
+        <floatfield></floatfield>
+    </div>
+    <img width='300' height='300' texture='Assets/EditorX/Demo/ccl.jpg'></img>
+</div>
+";
+        LoadFromMarkup(src);
     }
 
+    private void Change_Test(Element elem, Event evnt)
+    {
+        ValueElement valElem = (ValueElement)elem;
+        Debug.Log("My val is " + valElem.GetValue());
+    }
     private void Callback(Element elem, Event evnt)
     {
         ValueElement valElem = (ValueElement)elem;
