@@ -124,7 +124,7 @@ namespace EditorX
 
         protected virtual void PreGUI()
         {          
-            _rect = EditorGUILayout.GetControlRect(_style.layoutOptions);
+            _rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, _style.guistyle, _style.layoutOptions);
         }
         protected abstract void OnGUI();
 

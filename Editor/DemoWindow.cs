@@ -52,9 +52,9 @@ public class DemoWindow : EditorX.Window {
         string src = @"
 <div>
     <intfield change='Change_Test'></intfield>
-    <div layout-type='vertical' color='#FFFFFF'>
+    <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10' margin='10 10 10 10'>
         This is some text.
-        <intfield name='int1'></intfield>
+        <intfield name='int1' margin='10 10 10 10'></intfield>
         <floatfield name='float1' hidden='true'></floatfield>
         This is some text.
     </div>

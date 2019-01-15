@@ -252,6 +252,10 @@ namespace EditorX
                 case "color":
                     elem.style[name] = ColorUtility.ReadColor(attribute.data);
                     break;
+                case "padding":
+                case "margin":
+                    elem.style[name] = attribute.data;
+                    break;
                 case "click":
                 case "change":
                 case "keyup":

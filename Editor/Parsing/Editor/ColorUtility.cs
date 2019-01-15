@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace EditorX
 {
-    public class ColorUtility
+    public static class ColorUtility
     {
 
         public static Color ReadColor(string src)
@@ -23,7 +23,7 @@ namespace EditorX
 
                 return new Color((float)ri / 255.0f, (float)gi / 255.0f, (float)bi / 255.0f, (float)ai / 255.0f);
             }
-            PropertyInfo prop = typeof(Color).GetProperty("src");
+            PropertyInfo prop = typeof(Color).GetProperty(src);
 
             if(prop != null)
             {

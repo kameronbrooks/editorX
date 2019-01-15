@@ -177,12 +177,12 @@ namespace EditorX
             temp = null;
             if (_data.TryGetValue("margin", out temp))
             {
-                _guiStyle.margin = (RectOffset)temp;
+                _guiStyle.margin = RectUtility.ReadRectOffset(temp.ToString());
             }
             temp = null;
             if (_data.TryGetValue("padding", out temp))
             {
-                _guiStyle.padding = (RectOffset)temp;
+                _guiStyle.padding = RectUtility.ReadRectOffset(temp.ToString());
             }
             temp = null;
             if (_data.TryGetValue("color", out temp))
@@ -287,10 +287,10 @@ namespace EditorX
                     value = (ImagePosition)BinarySerializer.GetEnum(bytes, typeof(ImagePosition), ref index);
                     break;
                 case "margin":
-                    value = BinarySerializer.GetRectOffset(bytes, ref index);
+                    value = BinarySerializer.GetString(bytes, ref index);
                     break;
                 case "padding":
-                    value = BinarySerializer.GetRectOffset(bytes, ref index);
+                    value = BinarySerializer.GetString(bytes, ref index);
                     break;
                 case "color":
                     value = BinarySerializer.GetColor(bytes, ref index);
