@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
@@ -11,8 +9,7 @@ namespace EditorX
     public class Div : Element
     {
         [SerializeField]
-        LayoutType _layoutType;
-
+        private LayoutType _layoutType;
 
         public override string tag
         {
@@ -30,18 +27,20 @@ namespace EditorX
         protected override void PreGUI()
         {
         }
+
         protected override void OnGUI()
         {
-            if(name != null && name != "") GUI.SetNextControlName(name);
+            if (name != null && name != "") GUI.SetNextControlName(name);
             if (_layoutType == LayoutType.Horizontal)
             {
                 _rect = EditorGUILayout.BeginHorizontal(style.layoutOptions);
-            } else
+            }
+            else
             {
                 _rect = EditorGUILayout.BeginVertical(style.layoutOptions);
             }
 
-            if(style.backgroundColor != Color.clear)
+            if (style.backgroundColor != Color.clear)
             {
                 EditorGUI.DrawRect(_rect, style.backgroundColor);
             }
@@ -55,22 +54,21 @@ namespace EditorX
             {
                 EditorGUILayout.EndVertical();
             }
-
         }
+
         protected override void PostGUI()
         {
-
         }
 
         public override bool SetProperty(string name, object value)
         {
             if (base.SetProperty(name, value)) return true;
 
-            switch(name)
+            switch (name)
             {
                 case "layout-type":
                 case "layouttype":
-                    if(value.GetType() == typeof(LayoutType))
+                    if (value.GetType() == typeof(LayoutType))
                     {
                         _layoutType = (LayoutType)value;
                     }
@@ -78,33 +76,32 @@ namespace EditorX
                     {
                         _layoutType = (LayoutType)System.Enum.Parse(typeof(LayoutType), value.ToString(), true);
                     }
-                    
+
                     return true;
 
                 default:
                     return false;
-
             }
         }
+
         public override object GetProperty(string name)
         {
             object result = base.GetProperty(name);
 
             if (result != null) return result;
 
-            switch(name)
+            switch (name)
             {
                 case "layout-type":
                 case "layouttype":
                     result = _layoutType;
                     break;
+
                 default:
                     break;
             }
 
             return result;
         }
-
     }
-
 }

@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Reflection;
 using UnityEngine;
-using System.Reflection;
 
 namespace EditorX
 {
     public static class ColorUtility
     {
-
         public static Color ReadColor(string src)
         {
             if (src[0] == '#')
@@ -25,7 +22,7 @@ namespace EditorX
             }
             PropertyInfo prop = typeof(Color).GetProperty(src);
 
-            if(prop != null)
+            if (prop != null)
             {
                 return (Color)prop.GetValue(null, null);
             }
@@ -34,5 +31,4 @@ namespace EditorX
             return Color.black;
         }
     }
-
 }

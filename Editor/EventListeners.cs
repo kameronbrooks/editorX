@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace EditorX
+﻿namespace EditorX
 {
     public static class ElementEvents
     {

@@ -1,8 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Reflection;
 
 namespace EditorX
 {
@@ -13,9 +11,10 @@ namespace EditorX
         public class SerializedObject
         {
             [SerializeField]
-            string _name;
+            private string _name;
+
             [SerializeField]
-            UnityEngine.Object _reference;
+            private UnityEngine.Object _reference;
 
             public string name
             {
@@ -39,13 +38,15 @@ namespace EditorX
                 _reference = ob;
             }
         }
+
         [System.Serializable]
         public partial class SerializedValue
         {
             [SerializeField]
-            string _fieldName;
+            private string _fieldName;
+
             [SerializeField]
-            byte[] _bytes;
+            private byte[] _bytes;
 
             public string name
             {
@@ -59,68 +60,82 @@ namespace EditorX
             {
                 _fieldName = name;
             }
+
             public SerializedValue(string name, bool val)
             {
                 _fieldName = name;
                 _bytes = BitConverter.GetBytes(val);
             }
+
             public SerializedValue(string name, int val)
             {
                 _fieldName = name;
                 _bytes = BitConverter.GetBytes(val);
             }
+
             public SerializedValue(string name, float val)
             {
                 _fieldName = name;
                 _bytes = BitConverter.GetBytes(val);
             }
+
             public SerializedValue(string name, string val)
             {
                 _fieldName = name;
                 _bytes = System.Text.Encoding.Unicode.GetBytes(val);
             }
+
             public SerializedValue(string name, object val)
             {
                 _fieldName = name;
                 _bytes = BinarySerializer.GetBytes(val);
             }
 
-            public T GetObject<T>() where T:new()
+            public T GetObject<T>() where T : new()
             {
                 return BinarySerializer.GetObject<T>(_bytes);
             }
+
             public bool GetBool(int index = 0)
             {
                 return BitConverter.ToBoolean(_bytes, index);
             }
+
             public int GetInt(int index = 0)
             {
                 return BitConverter.ToInt32(_bytes, index);
             }
+
             public uint GetUInt(int index = 0)
             {
                 return BitConverter.ToUInt32(_bytes, index);
             }
+
             public long GetLong(int index = 0)
             {
                 return BitConverter.ToInt64(_bytes, index);
             }
+
             public ulong GetUlong(int index = 0)
             {
                 return BitConverter.ToUInt64(_bytes, index);
             }
+
             public float GetFloat(int index = 0)
             {
                 return BitConverter.ToSingle(_bytes, index);
             }
+
             public double GetDouble(int index = 0)
             {
                 return BitConverter.ToDouble(_bytes, index);
             }
+
             public string GetString(int index = 0)
             {
                 return (string)BinarySerializer.GetPrimitive(_bytes, typeof(string), ref index);
             }
+
             public T[] GetArray<T>(int index = 0)
             {
                 return (T[])BinarySerializer.GetPrimitive(_bytes, typeof(T[]), ref index);
@@ -128,19 +143,22 @@ namespace EditorX
         }
 
         [SerializeField]
-        List<SerializedValue> _values;
+        private List<SerializedValue> _values;
+
         [SerializeField]
-        List<SerializedObject> _objects;
+        private List<SerializedObject> _objects;
 
         public SerializedElement()
         {
             _values = new List<SerializedValue>();
             _objects = new List<SerializedObject>();
         }
+
         public void AddValue(SerializedValue serial)
         {
             _values.Add(serial);
         }
+
         public void AddReference(SerializedObject serial)
         {
             _objects.Add(serial);
@@ -148,7 +166,7 @@ namespace EditorX
 
         public SerializedValue GetValue(string name)
         {
-            for(int i = 0; i < _values.Count; i += 1)
+            for (int i = 0; i < _values.Count; i += 1)
             {
                 if (_values[i].name == name) return _values[i];
             }

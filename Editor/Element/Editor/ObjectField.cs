@@ -1,19 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
     public class ObjectField : ValueElement
     {
         [SerializeField]
-        UnityEngine.Object _value;
+        private UnityEngine.Object _value;
+
         [SerializeField]
-        string _typeName;
-        System.Type _type;
+        private string _typeName;
+
+        private System.Type _type;
+
         [SerializeField]
-        bool _allowSceneObjects = true;
+        private bool _allowSceneObjects = true;
 
         public override string tag
         {
@@ -61,7 +62,6 @@ namespace EditorX
 
         protected override void PreGUI()
         {
-
         }
 
         protected override void OnGUI()
@@ -69,7 +69,7 @@ namespace EditorX
             GUI.SetNextControlName(name);
             UnityEngine.Object temp = (_label != null) ?
                 EditorGUILayout.ObjectField(_label, _value, _type, _allowSceneObjects, style.layoutOptions) :
-                EditorGUILayout.ObjectField( _value, _type, _allowSceneObjects, style.layoutOptions);
+                EditorGUILayout.ObjectField(_value, _type, _allowSceneObjects, style.layoutOptions);
 
             if (temp != _value)
             {
@@ -78,11 +78,62 @@ namespace EditorX
             }
         }
 
+        public override bool SetProperty(string name, object value)
+        {
+            if (base.SetProperty(name, value)) return true;
+
+            switch (name)
+            {
+                case "value":
+                case "path":
+                    if (value as UnityEngine.Object)
+                    {
+                        _value = (UnityEngine.Object)value;
+                    }
+                    else
+                    {
+                        Object temp = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(value.ToString());
+                        if (temp != null)
+                        {
+                            _value = temp;
+                        }
+                        else
+                        {
+                            Debug.LogError("EditorX failed to load image: No object located at " + value.ToString());
+                        }
+                    }
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public override object GetProperty(string name)
+        {
+            object result = base.GetProperty(name);
+
+            if (result != null) return result;
+
+            switch (name)
+            {
+                case "value":
+                    result = _value;
+                    break;
+
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
         public override void OnBeforeSerialize()
         {
             base.OnBeforeSerialize();
             _typeName = _type.AssemblyQualifiedName;
         }
+
         public override void OnAfterDeserialize()
         {
             base.OnAfterDeserialize();

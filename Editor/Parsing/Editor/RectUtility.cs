@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace EditorX
 {
@@ -10,7 +8,7 @@ namespace EditorX
         {
             string[] elements = src.Split(' ', ',');
             int[] ints = new int[4];
-            for(int i = 0; i < ints.Length; i += 1)
+            for (int i = 0; i < ints.Length; i += 1)
             {
                 if (i < elements.Length) ints[i] = int.Parse(elements[i]);
                 else ints[i] = 0;
@@ -30,9 +28,6 @@ namespace EditorX
             }
 
             return new Rect(ints[0], ints[1], ints[2], ints[3]);
-
         }
-
     }
-
 }

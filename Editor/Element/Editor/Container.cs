@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace EditorX
+﻿namespace EditorX
 {
     public class Container : Element
     {
-        Window _window;
+        private Window _window;
 
         public Window window
         {
@@ -30,12 +26,11 @@ namespace EditorX
 
         protected override void PreGUI()
         {
-
         }
+
         protected override void OnGUI()
         {
             DrawChildren();
         }
-
     }
 }

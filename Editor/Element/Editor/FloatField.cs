@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
     public class FloatField : ValueElement
     {
         [SerializeField]
-        float _value;
+        private float _value;
 
         public System.Type valueType
         {
@@ -27,8 +25,6 @@ namespace EditorX
             return field;
         }
 
-        
-
         public override string tag
         {
             get
@@ -39,8 +35,8 @@ namespace EditorX
 
         protected override void PreGUI()
         {
-
         }
+
         protected override void OnGUI()
         {
             if (name != null && name != "") GUI.SetNextControlName(name);
@@ -53,9 +49,43 @@ namespace EditorX
                 CallEvent("change");
             }
         }
+
         protected override void PostGUI()
         {
+        }
 
+        public override bool SetProperty(string name, object value)
+        {
+            if (base.SetProperty(name, value)) return true;
+
+            switch (name)
+            {
+                case "value":
+                    _value = (value.GetType() == typeof(float)) ? (float)value : float.Parse(value.ToString());
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public override object GetProperty(string name)
+        {
+            object result = base.GetProperty(name);
+
+            if (result != null) return result;
+
+            switch (name)
+            {
+                case "value":
+                    result = _value;
+                    break;
+
+                default:
+                    break;
+            }
+
+            return result;
         }
 
         public override T GetValue<T>()
@@ -72,7 +102,5 @@ namespace EditorX
         {
             _value = (float)val;
         }
-
     }
-
 }

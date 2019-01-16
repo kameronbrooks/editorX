@@ -1,14 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 using UnityEditor;
-using System;
+using UnityEngine;
 
 namespace EditorX
 {
     public class ColorField : ValueElement
     {
-        Color _value;
+        [SerializeField]
+        private Color _value;
 
         public Type valueType
         {
@@ -28,8 +27,8 @@ namespace EditorX
 
         protected override void PreGUI()
         {
-
         }
+
         protected override void OnGUI()
         {
             GUI.SetNextControlName(name);
@@ -42,9 +41,43 @@ namespace EditorX
                 CallEvent("change");
             }
         }
+
         protected override void PostGUI()
         {
+        }
 
+        public override bool SetProperty(string name, object value)
+        {
+            if (base.SetProperty(name, value)) return true;
+
+            switch (name)
+            {
+                case "value":
+                    _value = (value.GetType() == typeof(Color)) ? (Color)value : ColorUtility.ReadColor(value.ToString());
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public override object GetProperty(string name)
+        {
+            object result = base.GetProperty(name);
+
+            if (result != null) return result;
+
+            switch (name)
+            {
+                case "value":
+                    result = _value;
+                    break;
+
+                default:
+                    break;
+            }
+
+            return result;
         }
 
         public override T GetValue<T>()
@@ -61,7 +94,5 @@ namespace EditorX
         {
             _value = (Color)val;
         }
-
-
     }
 }

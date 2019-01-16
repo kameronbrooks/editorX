@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
     public class Img : Element
     {
         [SerializeField]
-        Texture _texture;
+        private Texture _texture;
+
         [SerializeField]
-        ScaleMode _scaleMode;
+        private ScaleMode _scaleMode;
 
         public Texture texture
         {
@@ -46,7 +45,7 @@ namespace EditorX
 
         protected override void OnGUI()
         {
-            if(_texture != null) EditorGUI.DrawTextureTransparent(_rect, _texture, _scaleMode);
+            if (_texture != null) EditorGUI.DrawTextureTransparent(_rect, _texture, _scaleMode);
         }
 
         public override bool SetProperty(string name, object value)
@@ -56,6 +55,7 @@ namespace EditorX
             switch (name)
             {
                 case "texture":
+                case "src":
                     if (value as Texture != null)
                     {
                         _texture = (Texture)value;
@@ -66,19 +66,19 @@ namespace EditorX
                         if (temp != null)
                         {
                             _texture = temp;
-                        } else
+                        }
+                        else
                         {
                             Debug.LogError("EditorX failed to load image: No texture located at " + value.ToString());
                         }
                     }
-
                     return true;
 
                 default:
                     return false;
-
             }
         }
+
         public override object GetProperty(string name)
         {
             object result = base.GetProperty(name);
@@ -90,13 +90,12 @@ namespace EditorX
                 case "texture":
                     result = _texture;
                     break;
+
                 default:
                     break;
             }
 
             return result;
         }
-
-
     }
 }

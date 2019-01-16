@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEngine;
 
 namespace EditorX
 {
@@ -26,9 +23,10 @@ namespace EditorX
         {
             _label = content;
         }
+
         public void SetLabel(string content)
         {
-            if(content == "" || content == null)
+            if (content == "" || content == null)
             {
                 _label = null;
             }
@@ -37,6 +35,7 @@ namespace EditorX
                 _label = new GUIContent(content);
             }
         }
+
         public void SetLabel(string content, string tooltip)
         {
             if (content == "" || content == null)
@@ -66,7 +65,6 @@ namespace EditorX
             if (_label != null && _label.text == "")
             {
                 _label = null;
-
             }
         }
     }

@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
 using System.Reflection;
+using UnityEngine;
 
 namespace EditorX
 {
@@ -12,38 +12,47 @@ namespace EditorX
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(byte val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(short val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(ushort val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(int val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(uint val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(float val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(double val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(long val)
         {
             return BitConverter.GetBytes(val);
         }
+
         public static byte[] GetBytes(string val)
         {
             byte[] buffer = new byte[sizeof(int) + val.Length * sizeof(char)];
@@ -52,6 +61,7 @@ namespace EditorX
             Array.Copy(buffer2, 0, buffer, sizeof(int), buffer2.Length);
             return buffer;
         }
+
         public static byte[] GetBytes(IList list)
         {
             List<byte> bytes = new List<byte>();
@@ -61,6 +71,7 @@ namespace EditorX
             }
             return bytes.ToArray();
         }
+
         public static byte[] GetBytes(Vector2 val)
         {
             byte[] buffer = new byte[sizeof(float) * 2];
@@ -68,6 +79,7 @@ namespace EditorX
             Array.Copy(GetBytes(val.y), sizeof(float), buffer, 0, sizeof(float));
             return buffer;
         }
+
         public static byte[] GetBytes(Vector3 val)
         {
             List<byte> buffer = new List<byte>();
@@ -76,6 +88,7 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.z));
             return buffer.ToArray();
         }
+
         public static byte[] GetBytes(Vector4 val)
         {
             List<byte> buffer = new List<byte>();
@@ -85,6 +98,7 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.w));
             return buffer.ToArray();
         }
+
         public static byte[] GetBytes(Color val)
         {
             List<byte> buffer = new List<byte>();
@@ -94,6 +108,7 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.a));
             return buffer.ToArray();
         }
+
         public static byte[] GetBytes(Rect val)
         {
             List<byte> buffer = new List<byte>();
@@ -103,8 +118,9 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.height));
             return buffer.ToArray();
         }
+
         public static byte[] GetBytes(RectOffset val)
-        { 
+        {
             List<byte> buffer = new List<byte>();
             buffer.AddRange(GetBytes(val.left));
             buffer.AddRange(GetBytes(val.right));
@@ -112,6 +128,7 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.bottom));
             return buffer.ToArray();
         }
+
         public static byte[] GetBytes(Quaternion val)
         {
             List<byte> buffer = new List<byte>();
@@ -121,13 +138,12 @@ namespace EditorX
             buffer.AddRange(GetBytes(val.w));
             return buffer.ToArray();
         }
+
         public static byte[] GetBytes(System.Enum val, Type enumType)
         {
-            return GetBytes((int)System.Enum.ToObject(enumType,val));
+            return GetBytes((int)System.Enum.ToObject(enumType, val));
         }
 
-        
-        
         public static byte[] GetBytes(object ob)
         {
             Type type = ob.GetType();
@@ -148,7 +164,6 @@ namespace EditorX
             if (type == typeof(Quaternion)) return GetBytes((Quaternion)ob);
             if (type.IsEnum) return GetBytes((int)ob);
 
-
             FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public);
             List<byte> bytes = new List<byte>();
             for (int i = 0; i < fields.Length; i += 1)
@@ -158,73 +173,83 @@ namespace EditorX
             return bytes.ToArray();
         }
 
-        
         public static bool GetBool(byte[] data, ref int index)
         {
             bool result = BitConverter.ToBoolean(data, index);
             index += sizeof(bool);
             return result;
         }
+
         public static char GetChar(byte[] data, ref int index)
         {
             char result = BitConverter.ToChar(data, index);
             index += sizeof(char);
             return result;
         }
+
         public static short GetShort(byte[] data, ref int index)
         {
             short result = BitConverter.ToInt16(data, index);
             index += sizeof(short);
             return result;
         }
+
         public static ushort GetUShort(byte[] data, ref int index)
         {
             ushort result = BitConverter.ToUInt16(data, index);
             index += sizeof(ushort);
             return result;
         }
+
         public static int GetInt(byte[] data, ref int index)
         {
             int result = BitConverter.ToInt32(data, index);
             index += sizeof(int);
             return result;
         }
+
         public static System.Enum GetEnum(byte[] data, Type enumType, ref int index)
         {
             int result = BitConverter.ToInt32(data, index);
             index += sizeof(int);
             return (System.Enum)System.Enum.ToObject(enumType, result);
         }
+
         public static uint GetUInt(byte[] data, ref int index)
         {
             uint result = BitConverter.ToUInt32(data, index);
             index += sizeof(uint);
             return result;
         }
+
         public static long GetLong(byte[] data, ref int index)
         {
             long result = BitConverter.ToInt64(data, index);
             index += sizeof(long);
             return result;
         }
+
         public static ulong GetULong(byte[] data, ref int index)
         {
             ulong result = BitConverter.ToUInt64(data, index);
             index += sizeof(ulong);
             return result;
         }
+
         public static float GetFloat(byte[] data, ref int index)
         {
             float result = BitConverter.ToSingle(data, index);
             index += sizeof(float);
             return result;
         }
+
         public static double GetDouble(byte[] data, ref int index)
         {
             double result = BitConverter.ToDouble(data, index);
             index += sizeof(double);
             return result;
         }
+
         public static string GetString(byte[] data, ref int index)
         {
             int length = BitConverter.ToInt32(data, index);
@@ -233,12 +258,14 @@ namespace EditorX
             index += length * sizeof(char);
             return result;
         }
+
         public static Vector2 GetVector2(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
             float y = GetFloat(data, ref index);
             return new Vector2(x, y);
         }
+
         public static Vector3 GetVector3(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
@@ -246,6 +273,7 @@ namespace EditorX
             float z = GetFloat(data, ref index);
             return new Vector3(x, y, z);
         }
+
         public static Vector4 GetVector4(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
@@ -254,6 +282,7 @@ namespace EditorX
             float w = GetFloat(data, ref index);
             return new Vector4(x, y, z, w);
         }
+
         public static Color GetColor(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
@@ -262,6 +291,7 @@ namespace EditorX
             float w = GetFloat(data, ref index);
             return new Color(x, y, z, w);
         }
+
         public static Rect GetRect(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
@@ -270,6 +300,7 @@ namespace EditorX
             float w = GetFloat(data, ref index);
             return new Rect(x, y, z, w);
         }
+
         public static RectOffset GetRectOffset(byte[] data, ref int index)
         {
             int x = GetInt(data, ref index);
@@ -278,6 +309,7 @@ namespace EditorX
             int w = GetInt(data, ref index);
             return new RectOffset(x, y, z, w);
         }
+
         public static Quaternion GetQuaternion(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
@@ -286,6 +318,7 @@ namespace EditorX
             float w = GetFloat(data, ref index);
             return new Quaternion(x, y, z, w);
         }
+
         public static object GetPrimitive(byte[] data, Type type, ref int index)
         {
             if (type == typeof(bool)) return GetBool(data, ref index);
@@ -349,13 +382,13 @@ namespace EditorX
             {
                 int length = GetInt(data, ref index);
                 IList list = Array.CreateInstance(type.GetElementType(), length);
-                for(int i = 0; i < length; i += 1)
+                for (int i = 0; i < length; i += 1)
                 {
                     list[i] = GetPrimitive(data, type.GetElementType(), ref index);
                 }
                 return list;
             }
-            
+
             throw new Exception(type.Name + " is not a supported primitive");
         }
 
@@ -371,7 +404,8 @@ namespace EditorX
 
             return t;
         }
-        public static T GetObject<T>(byte[] bytes) where T:new()
+
+        public static T GetObject<T>(byte[] bytes) where T : new()
         {
             T t = new T();
             FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public);
@@ -384,7 +418,5 @@ namespace EditorX
 
             return t;
         }
-
     }
-
 }

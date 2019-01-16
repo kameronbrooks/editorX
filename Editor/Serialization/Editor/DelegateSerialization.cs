@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace EditorX
 {
@@ -11,15 +9,16 @@ namespace EditorX
         {
             [SerializeField]
             public string eventname;
+
             [SerializeField]
             public UnityEngine.Object[] targets;
+
             [SerializeField]
             public string[] methods;
         }
 
         public static SerializedDelegate SerializeDelegate(EventCallback callback, string eventname)
         {
-            
             System.Delegate[] delegates = callback.GetInvocationList();
             SerializedDelegate serial = new SerializedDelegate()
             {
@@ -27,7 +26,7 @@ namespace EditorX
                 targets = new Object[delegates.Length],
                 methods = new string[delegates.Length]
             };
-            for(int i = 0; i < delegates.Length; i += 1)
+            for (int i = 0; i < delegates.Length; i += 1)
             {
                 serial.targets[i] = (UnityEngine.Object)delegates[i].Target;
                 serial.methods[i] = delegates[i].Method.Name;
@@ -40,7 +39,7 @@ namespace EditorX
         {
             EventCallback callback = null;
 
-            for(int i = 0; i < serial.methods.Length; i += 1)
+            for (int i = 0; i < serial.methods.Length; i += 1)
             {
                 EventCallback subCallback = (EventCallback)System.Delegate.CreateDelegate(typeof(EventCallback), serial.targets[i], serial.methods[i]);
                 callback += subCallback;

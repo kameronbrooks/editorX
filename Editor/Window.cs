@@ -1,36 +1,35 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
     [System.Serializable]
     public abstract class Window : EditorWindow, ISerializationCallbackReceiver
     {
+        [SerializeField]
+        private Element _body;
 
         [SerializeField]
-        Element _body;
-        [SerializeField]
         private bool _isLoaded = false;
+
         [SerializeField]
         private bool _reloadOnAssemblyReload = false;
 
         protected abstract void OnOpen();
+
         protected abstract void OnClose();
+
         //protected abstract void Draw();
         protected virtual void PreGUI()
         {
-
         }
+
         protected virtual void PostGUI()
         {
-            
         }
 
         protected virtual void OnEditorUpdate()
         {
-
         }
 
         public abstract void OnLoadWindow();
@@ -39,19 +38,19 @@ namespace EditorX
         {
             if (!_isLoaded || _body == null)
             {
-
                 _body = NewElement<Container>("body");
                 ((Container)_body).window = this;
                 OnLoadWindow();
                 _isLoaded = true;
-            }   
-            
+            }
         }
+
         public void Unload()
         {
-            if(_body != null) _body.Unload();
+            if (_body != null) _body.Unload();
             _isLoaded = false;
         }
+
         protected Element body
         {
             get
@@ -93,9 +92,7 @@ namespace EditorX
 
         public void OnEnable()
         {
-
         }
-
 
         public void OnLostFocus()
         {
@@ -132,22 +129,20 @@ namespace EditorX
             }
         }
 
-
         public void OnAfterDeserialize()
         {
-            
         }
 
-        public static T NewElement<T>() where T:Element
+        public static T NewElement<T>() where T : Element
         {
             T elem = Element.Create<T>();
             return elem;
         }
+
         public static T NewElement<T>(string name) where T : Element
         {
             T elem = Element.Create<T>(name);
             return elem;
         }
     }
-
 }

@@ -3,24 +3,24 @@ using UnityEngine;
 
 namespace EditorX
 {
-    public class IntField : ValueElement
+    public class FloatSlider : IntField
     {
         [SerializeField]
-        private int _value;
+        private float _value;
 
-        public System.Type valueType
-        {
-            get
-            {
-                return typeof(int);
-            }
-        }
+        [SerializeField]
+        private float _lvalue;
 
-        public static IntField Create(string name, int value = 0)
+        [SerializeField]
+        private float _rvalue;
+
+        public static FloatSlider Create(string name, float value = 0, float lval = 0, float rval = 10)
         {
-            IntField field = ScriptableObject.CreateInstance<IntField>();
+            FloatSlider field = ScriptableObject.CreateInstance<FloatSlider>();
             field.name = name;
             field._value = value;
+            field._lvalue = lval;
+            field._rvalue = rval;
 
             return field;
         }
@@ -29,7 +29,7 @@ namespace EditorX
         {
             get
             {
-                return "int";
+                return "intslider";
             }
         }
 
@@ -40,9 +40,9 @@ namespace EditorX
         protected override void OnGUI()
         {
             if (name != null && name != "") GUI.SetNextControlName(name);
-            int temp = (_label != null) ?
-                EditorGUILayout.IntField(_label, _value, style.guistyle, style.layoutOptions) :
-                EditorGUILayout.IntField(_value, style.guistyle, style.layoutOptions);
+            float temp = (_label != null) ?
+                EditorGUILayout.Slider(_label, _value, _lvalue, _rvalue, style.layoutOptions) :
+                EditorGUILayout.Slider(_value, _lvalue, _rvalue, style.layoutOptions);
             if (temp != _value)
             {
                 _value = temp;
@@ -61,7 +61,17 @@ namespace EditorX
             switch (name)
             {
                 case "value":
-                    _value = (value.GetType() == typeof(int)) ? (int)value : int.Parse(value.ToString());
+                    _value = (value.GetType() == typeof(float)) ? (float)value : float.Parse(value.ToString());
+                    return true;
+
+                case "rvalue":
+                case "right-value":
+                    _rvalue = (value.GetType() == typeof(float)) ? (float)value : float.Parse(value.ToString());
+                    return true;
+
+                case "lvalue":
+                case "left-value":
+                    _lvalue = (value.GetType() == typeof(float)) ? (float)value : float.Parse(value.ToString());
                     return true;
 
                 default:
@@ -79,6 +89,16 @@ namespace EditorX
             {
                 case "value":
                     result = _value;
+                    break;
+
+                case "rvalue":
+                case "right-value":
+                    result = _rvalue;
+                    break;
+
+                case "lvalue":
+                case "left-value":
+                    result = _lvalue;
                     break;
 
                 default:

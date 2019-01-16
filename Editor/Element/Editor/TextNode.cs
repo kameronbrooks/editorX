@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
@@ -48,19 +46,16 @@ namespace EditorX
                     style["color"] = parent.style["color"];
                 }
             }
-            
         }
 
-        
         protected override void OnGUI()
         {
             object fontSize = style["font-size"];
             if (fontSize != null)
             {
-                _rect.height = Mathf.Max(_rect.height, (float)((int)fontSize)*1.5f);
+                _rect.height = Mathf.Max(_rect.height, (float)((int)fontSize) * 1.5f);
             }
             EditorGUI.LabelField(_rect, _text, style.guistyle);
-
         }
 
         public override bool SetProperty(string name, object value)
@@ -77,9 +72,9 @@ namespace EditorX
 
                 default:
                     return false;
-
             }
         }
+
         public override object GetProperty(string name)
         {
             object result = base.GetProperty(name);
@@ -91,13 +86,12 @@ namespace EditorX
                 case "value":
                     result = _text;
                     break;
+
                 default:
                     break;
             }
 
             return result;
         }
-
-
     }
 }

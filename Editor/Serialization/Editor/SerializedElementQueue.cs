@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace EditorX
@@ -8,9 +7,10 @@ namespace EditorX
     public class SerializedElementQueue
     {
         [SerializeField]
-        List<SerializedElement> _data;
+        private List<SerializedElement> _data;
+
         [SerializeField]
-        int _startIndex;
+        private int _startIndex;
 
         public SerializedElementQueue()
         {
@@ -31,14 +31,17 @@ namespace EditorX
             _data.Clear();
             _startIndex = 0;
         }
+
         public void Enqueue(SerializedElement serial)
         {
             _data.Add(serial);
         }
+
         public SerializedElement Dequeue()
         {
-            return _data[_startIndex++];           
+            return _data[_startIndex++];
         }
+
         public bool isEmpty()
         {
             return _startIndex >= _data.Count;

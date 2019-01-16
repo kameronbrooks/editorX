@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEditor;
 
 namespace EditorX
 {
@@ -9,7 +7,7 @@ namespace EditorX
     public class ImageButton : Element
     {
         [SerializeField]
-        Texture _img;
+        private Texture _img;
 
         public Texture img
         {
@@ -46,8 +44,6 @@ namespace EditorX
             {
                 CallEvent("click");
             }
-
-
         }
 
         public override bool SetProperty(string name, object value)
@@ -79,9 +75,9 @@ namespace EditorX
 
                 default:
                     return false;
-
             }
         }
+
         public override object GetProperty(string name)
         {
             object result = base.GetProperty(name);
@@ -94,13 +90,12 @@ namespace EditorX
                 case "img":
                     result = _img;
                     break;
+
                 default:
                     break;
             }
 
             return result;
         }
-
-
     }
 }

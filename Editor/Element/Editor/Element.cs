@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEditor;
-using UnityEngine.Events;
+using UnityEngine;
 
 namespace EditorX
 {
@@ -12,19 +10,25 @@ namespace EditorX
     {
         [SerializeField]
         protected Element _parent;
+
         [SerializeField]
         protected List<Element> _children;
+
         protected Rect _rect;
         protected Dictionary<string, object> _styleData;
+
         [SerializeField]
         private bool _visible = true;
 
         [System.NonSerialized]
         private Dictionary<string, EventCallback> _eventHandlers;
+
         [SerializeField]
-        List<DelegateSerialization.SerializedDelegate> _serializedDelegates;
+        private List<DelegateSerialization.SerializedDelegate> _serializedDelegates;
+
         [SerializeField]
         private Style _style;
+
         public Element parent
         {
             get
@@ -43,9 +47,7 @@ namespace EditorX
             {
                 return _children;
             }
-
         }
-
 
         public Rect rect
         {
@@ -66,6 +68,7 @@ namespace EditorX
                 _style = value;
             }
         }
+
         public abstract string tag
         {
             get;
@@ -83,6 +86,7 @@ namespace EditorX
                 _visible = value;
             }
         }
+
         protected bool hidden
         {
             get
@@ -106,15 +110,14 @@ namespace EditorX
             }
             return false;
         }
-        
+
         public void OnEnable()
         {
             if (_style == null) _style = new Style();
-            if(_children == null) _children = new List<Element>();
-            if(_rect == null) _rect = new Rect();
-            if(_parent == null) _parent = null;
-            if(_eventHandlers == null) _eventHandlers = new Dictionary<string, EventCallback>();
-
+            if (_children == null) _children = new List<Element>();
+            if (_rect == null) _rect = new Rect();
+            if (_parent == null) _parent = null;
+            if (_eventHandlers == null) _eventHandlers = new Dictionary<string, EventCallback>();
         }
 
         protected virtual void InitializeGUIStyle()
@@ -123,14 +126,14 @@ namespace EditorX
         }
 
         protected virtual void PreGUI()
-        {          
+        {
             _rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, _style.guistyle, _style.layoutOptions);
         }
+
         protected abstract void OnGUI();
 
         protected virtual void PostGUI()
         {
-
         }
 
         public virtual Element AddChild(Element child)
@@ -154,7 +157,7 @@ namespace EditorX
 
             DestroyImmediate(this);
         }
-        
+
         public virtual TextNode AddText(string text)
         {
             TextNode child = TextNode.Create(text);
@@ -167,10 +170,10 @@ namespace EditorX
             }
             return child;
         }
-        
+
         public virtual Element GetChildById(string name)
         {
-            for(int i = 0; i < _children.Count; i++)
+            for (int i = 0; i < _children.Count; i++)
             {
                 if (_children[i].name == name) return _children[i];
             }
@@ -181,6 +184,7 @@ namespace EditorX
             }
             return null;
         }
+
         protected void DrawChildren()
         {
             for (int i = 0; i < _children.Count; i++)
@@ -188,36 +192,35 @@ namespace EditorX
                 _children[i].Draw();
             }
         }
-        
+
         protected virtual void HandleEvents()
         {
             Event e = Event.current;
             if (e.type == EventType.Used) return;
             if (_rect == null) return;
-            
+
             if (e.type == EventType.KeyUp) CallEvent("keyup");
             if (e.type == EventType.KeyDown) CallEvent("keydown");
 
             if (!_rect.Contains(e.mousePosition)) return;
             if (e.type == EventType.MouseDown) CallEvent("mousedown");
             if (e.type == EventType.MouseUp) CallEvent("mouseup");
-
         }
-        
+
         public virtual void Draw()
         {
-            if(_visible)
+            if (_visible)
             {
                 InitializeGUIStyle();
                 PreGUI();
                 OnGUI();
                 PostGUI();
-            }           
+            }
         }
-        
+
         public void AddEventListener(string eventType, EventCallback callback)
         {
-            if(callback == null)
+            if (callback == null)
             {
                 Debug.LogWarning("Cannot add null callback");
                 return;
@@ -227,7 +230,7 @@ namespace EditorX
             if (targ == null) Debug.LogWarning("[" + callback.Method.Name + "] Callback target type is not derived from UnityEngine.Object, callback will not be serialized. This callback will be lost when assembly reloads.");
 
             eventType = eventType.ToLower();
-            if(_eventHandlers.ContainsKey(eventType))
+            if (_eventHandlers.ContainsKey(eventType))
             {
                 _eventHandlers[eventType] += callback;
             }
@@ -236,6 +239,7 @@ namespace EditorX
                 _eventHandlers[eventType] = callback;
             }
         }
+
         public void RemoveEventListener(string eventType, EventCallback callback)
         {
             eventType = eventType.ToLower();
@@ -244,10 +248,10 @@ namespace EditorX
                 _eventHandlers[eventType] -= callback;
             }
         }
-        
+
         public virtual void OnWindowLostFocus()
         {
-            for(int i = 0; i < _children.Count; i += 1)
+            for (int i = 0; i < _children.Count; i += 1)
             {
                 _children[i].OnWindowLostFocus();
             }
@@ -260,22 +264,26 @@ namespace EditorX
                 _children[i].OnWindowFocus();
             }
         }
+
         public static T Create<T>() where T : Element
         {
             T elem = ScriptableObject.CreateInstance<T>();
             return elem;
         }
+
         public static T Create<T>(string name) where T : Element
         {
             T elem = ScriptableObject.CreateInstance<T>();
             elem.name = name;
             return elem;
         }
+
         public static Element Create(System.Type type)
         {
             Element elem = (Element)ScriptableObject.CreateInstance(type);
             return elem;
         }
+
         public static Element Create(System.Type type, string name)
         {
             Element elem = (Element)ScriptableObject.CreateInstance(type);
@@ -292,6 +300,7 @@ namespace EditorX
                 _serializedDelegates.Add(DelegateSerialization.SerializeDelegate(_eventHandlers[key], key));
             }
         }
+
         protected void DeserializeEventListeners()
         {
             _eventHandlers = new Dictionary<string, EventCallback>();
@@ -300,6 +309,7 @@ namespace EditorX
                 _eventHandlers.Add(_serializedDelegates[i].eventname, DelegateSerialization.DeserializeDelegate(_serializedDelegates[i]));
             }
         }
+
         public virtual void OnBeforeSerialize()
         {
             SerializeEventHandlers();
@@ -312,26 +322,31 @@ namespace EditorX
 
         public virtual bool SetProperty(string name, object value)
         {
-            switch(name)
+            switch (name)
             {
                 case "visible":
                     _visible = (value.GetType() == typeof(bool)) ? (bool)value : System.Boolean.Parse(value.ToString());
                     return true;
+
                 case "hidden":
                     _visible = (value.GetType() == typeof(bool)) ? !(bool)value : !System.Boolean.Parse(value.ToString());
                     return true;
+
                 default:
                     return false;
             }
         }
+
         public virtual object GetProperty(string name)
         {
             switch (name)
             {
                 case "visible":
                     return _visible;
+
                 case "hidden":
                     return !_visible;
+
                 default:
                     return null;
             }

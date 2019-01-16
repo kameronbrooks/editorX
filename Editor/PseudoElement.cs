@@ -1,20 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Reflection;
 using UnityEditor;
-using System.Reflection;
+using UnityEngine;
 
 namespace EditorX
 {
     public class PseudoElement<T>
     {
-        MethodInfo _method;
-        string _name;
-        Rect _rect;
-        T _value;
-        GUILayoutOption[] _guiLayoutOptions;
-        object[] _argumentBuffer;
-        GUIContent _label;
+        private MethodInfo _method;
+        private string _name;
+        private Rect _rect;
+        private T _value;
+        private GUILayoutOption[] _guiLayoutOptions;
+        private object[] _argumentBuffer;
+        private GUIContent _label;
+
         public delegate void Callback(T val);
 
         public event Callback onChange;
@@ -31,14 +30,12 @@ namespace EditorX
             _rect = EditorGUILayout.GetControlRect(_guiLayoutOptions);
             T temp = (T)_method.Invoke(null, _argumentBuffer);
 
-            if(!temp.Equals(_value))
+            if (!temp.Equals(_value))
             {
                 _value = temp;
                 onChange(_value);
             }
             return _value;
         }
-
     }
-
 }

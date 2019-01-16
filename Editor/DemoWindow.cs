@@ -1,38 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using EditorX;
 using UnityEditor;
-using EditorX;
-using System;
+using UnityEngine;
 
-public class DemoWindow : EditorX.Window {
-
-    Element floatField;
-    Img _img;
-    ImageButton _imageButton;
-    Texture _texture;
+public class DemoWindow : EditorX.Window
+{
+    private Element floatField;
+    private Img _img;
+    private ImageButton _imageButton;
+    private Texture _texture;
 
     [MenuItem("Tools/Test")]
     public static void Main()
-    {      
-        DemoWindow window = EditorWindow.GetWindow<DemoWindow>();     
+    {
+        DemoWindow window = EditorWindow.GetWindow<DemoWindow>();
     }
-
 
     protected override void OnOpen()
     {
         Debug.Log("Starting");
-        
     }
 
     protected override void OnClose()
     {
-        
     }
 
-
     protected override void PreGUI()
-    {       
+    {
         base.PreGUI();
         this.reloadOnAssemblyReload = true;
         if (GUILayout.Button("Refresh"))
@@ -41,6 +34,7 @@ public class DemoWindow : EditorX.Window {
             Repaint();
         }
     }
+
     protected override void PostGUI()
     {
         base.PostGUI();
@@ -48,7 +42,6 @@ public class DemoWindow : EditorX.Window {
 
     public override void OnLoadWindow()
     {
-        
         string src = @"
 <div>
     <intfield change='Change_Test'></intfield>
@@ -57,6 +50,7 @@ public class DemoWindow : EditorX.Window {
         <intfield name='int1' margin='10 10 10 10'></intfield>
         <floatfield name='float1' hidden='true'></floatfield>
         This is some text.
+        <colorfield value='blue'></colorfield>
     </div>
     <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg'></img>
 </div>
@@ -69,6 +63,7 @@ public class DemoWindow : EditorX.Window {
         ValueElement valElem = (ValueElement)elem;
         Debug.Log("My val is " + valElem.GetValue());
     }
+
     private void Callback(Element elem, Event evnt)
     {
         ValueElement valElem = (ValueElement)elem;
