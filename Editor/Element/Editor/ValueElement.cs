@@ -19,6 +19,11 @@ namespace EditorX
             }
         }
 
+        public abstract System.Type valueType
+        {
+            get;
+        }
+
         public void SetLabel(GUIContent content)
         {
             _label = content;
@@ -66,6 +71,39 @@ namespace EditorX
             {
                 _label = null;
             }
+        }
+
+        public override bool SetProperty(string name, object value)
+        {
+            if (base.SetProperty(name, value)) return true;
+
+            switch (name)
+            {
+                case "label":
+                    SetLabel(value.ToString());
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public override object GetProperty(string name)
+        {
+            object result = base.GetProperty(name);
+
+            if (result != null) return result;
+
+            switch (name)
+            {
+                case "label":
+                    result = _label;
+                    break;
+
+                default:
+                    break;
+            }
+
+            return result;
         }
     }
 }

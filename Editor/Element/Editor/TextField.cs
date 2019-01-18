@@ -1,49 +1,54 @@
-﻿using UnityEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace EditorX
 {
-    public class IntField : ValueElement
+    public class TextField : ValueElement
     {
         [SerializeField]
-        private int _value;
+        string _value;
 
         public override System.Type valueType
         {
             get
             {
-                return typeof(int);
+                return typeof(float);
             }
         }
 
-        public static IntField Create(string name, int value = 0)
+        public override T GetValue<T>()
         {
-            IntField field = ScriptableObject.CreateInstance<IntField>();
-            field.name = name;
-            field._value = value;
+            return (T)(object)_value;
+        }
 
-            return field;
+        public override object GetValue()
+        {
+            return _value;
+        }
+
+        public override void SetValue(object val)
+        {
+            _value = (string)val;
         }
 
         protected override void PreGUI()
         {
+
         }
 
         protected override void OnGUI()
         {
             if (name != null && name != "") GUI.SetNextControlName(name);
-            int temp = (_label != null) ?
-                EditorGUILayout.IntField(_label, _value, style.guistyle, style.layoutOptions) :
-                EditorGUILayout.IntField(_value, style.guistyle, style.layoutOptions);
+            string temp = (_label != null) ?
+                EditorGUILayout.TextField(_label, _value, style.guistyle, style.layoutOptions) :
+                EditorGUILayout.TextField(_value, style.guistyle, style.layoutOptions);
             if (temp != _value)
             {
                 _value = temp;
                 CallEvent("change");
             }
-        }
-
-        protected override void PostGUI()
-        {
         }
 
         public override bool SetProperty(string name, object value)
@@ -53,7 +58,7 @@ namespace EditorX
             switch (name)
             {
                 case "value":
-                    _value = (value.GetType() == typeof(int)) ? (int)value : int.Parse(value.ToString());
+                    _value = value.ToString();
                     return true;
 
                 default:
@@ -79,20 +84,6 @@ namespace EditorX
 
             return result;
         }
-
-        public override T GetValue<T>()
-        {
-            return (T)(object)_value;
-        }
-
-        public override object GetValue()
-        {
-            return _value;
-        }
-
-        public override void SetValue(object val)
-        {
-            _value = (int)val;
-        }
     }
+
 }

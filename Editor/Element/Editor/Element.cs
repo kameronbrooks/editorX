@@ -20,6 +20,9 @@ namespace EditorX
         [SerializeField]
         private bool _visible = true;
 
+        [SerializeField]
+        private bool _isLoaded = false;
+
         [System.NonSerialized]
         private Dictionary<string, EventCallback> _eventHandlers;
 
@@ -69,9 +72,12 @@ namespace EditorX
             }
         }
 
-        public abstract string tag
+        public virtual string tag
         {
-            get;
+            get
+            {
+                return this.GetType().Name.ToLower();
+            }
         }
 
         protected bool visible
@@ -118,6 +124,8 @@ namespace EditorX
             if (_rect == null) _rect = new Rect();
             if (_parent == null) _parent = null;
             if (_eventHandlers == null) _eventHandlers = new Dictionary<string, EventCallback>();
+
+            CallEvent("assemblyReload");
         }
 
         protected virtual void InitializeGUIStyle()
@@ -148,8 +156,20 @@ namespace EditorX
             return child;
         }
 
+        public virtual void Load()
+        {
+            _isLoaded = true;
+            CallEvent("load");
+
+            for (int i = 0; i < _children.Count; i++)
+            {
+                _children[i].Load();
+            }
+        }
+
         public virtual void Unload()
         {
+            _isLoaded = false;
             for (int i = 0; i < _children.Count; i++)
             {
                 _children[i].Unload();

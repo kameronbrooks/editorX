@@ -63,6 +63,11 @@ namespace EditorX
         private string _data;
         private int _index;
 
+        public EditorXParser(Window window)
+        {
+            _windowTarget = window;
+        }
+
         protected Tag[] Parse(string data)
         {
             _tagStack = new Stack<Tag>();
@@ -166,6 +171,7 @@ namespace EditorX
             }
         }
 
+        private Window _windowTarget;
         private UnityEngine.Object _callbackTarget;
 
         public Object callbackTarget
@@ -226,7 +232,6 @@ namespace EditorX
 
         protected void ApplyAttributes(List<Tag.Attribute> attributes, Element elem)
         {
-            Debug.Log("Applying Attributes" + attributes.Count);
             for (int i = 0; i < attributes.Count; i += 1)
             {
                 ApplyAttribute(attributes[i], elem);
@@ -265,13 +270,12 @@ namespace EditorX
                 case "margin":
                     elem.style[name] = attribute.data;
                     break;
-
+                case "load":
                 case "click":
                 case "change":
                 case "keyup":
                 case "keydown":
                     EventCallback callback = CreateEventCallback(attribute.data);
-                    Debug.Log(attribute.data + " " + attribute.name);
                     if (callback != null) elem.AddEventListener(name, callback);
                     break;
 
@@ -327,12 +331,45 @@ namespace EditorX
                 Debug.LogError(e.ToString());
                 return new Element[0];
             }
-
-            for (int i = 0; i < tags.Length; i += 1)
+            int i = 0;
+            if (tags.Length > 0)
+            {
+                if (tags[0].type == "head")
+                {
+                    ParseHead(tags[0]);
+                    i += 1;
+                }
+            }
+            for (; i < tags.Length; i += 1)
             {
                 elements.Add(CreateTree(tags[i]));
             }
             return elements.ToArray();
+        }
+
+        protected void ParseHead(Tag tag)
+        {
+            for (int i = 0; i < tag.attributes.Count; i += 1)
+            {
+                Tag.Attribute attribute = tag.attributes[i];
+                switch (attribute.name)
+                {
+                    case "skin":
+                        GUISkin skin = AssetDatabase.LoadAssetAtPath<GUISkin>(attribute.data);
+                        if(skin == null)
+                        {
+                            Debug.LogWarning("There was no GUISkin found at path: " + attribute.data);
+                        } else
+                        {
+                            _windowTarget.skin = skin;
+                        }
+                        
+                        break;
+                    default:
+                        break;
+                }
+
+            }
         }
 
         protected void EndTag()

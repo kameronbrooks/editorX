@@ -168,13 +168,13 @@ namespace EditorX
             temp = null;
             if (_data.TryGetValue("alignment", out temp))
             {
-                TextAnchor anchor = (temp.GetType() == typeof(string)) ? ConversionUtility.GetTextAnchor((string)temp) : (TextAnchor)temp;
+                TextAnchor anchor = (temp.GetType() == typeof(string)) ? (TextAnchor)EnumUtility.GetEnumObject(typeof(TextAnchor),(string)temp) : (TextAnchor)temp;
                 _guiStyle.alignment = anchor;
             }
             temp = null;
             if (_data.TryGetValue("image-position", out temp))
             {
-                ImagePosition impos = (temp.GetType() == typeof(string)) ? ConversionUtility.GetImagePosition((string)temp) : (ImagePosition)temp;
+                ImagePosition impos = (temp.GetType() == typeof(string)) ? (ImagePosition)EnumUtility.GetEnumObject(typeof(ImagePosition), (string)temp) : (ImagePosition)temp;
                 _guiStyle.imagePosition = impos;
             }
             temp = null;

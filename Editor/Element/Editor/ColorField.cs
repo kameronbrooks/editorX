@@ -9,7 +9,7 @@ namespace EditorX
         [SerializeField]
         private Color _value;
 
-        public Type valueType
+        public override Type valueType
         {
             get
             {

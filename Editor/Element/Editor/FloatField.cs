@@ -8,7 +8,7 @@ namespace EditorX
         [SerializeField]
         private float _value;
 
-        public System.Type valueType
+        public override System.Type valueType
         {
             get
             {
@@ -23,14 +23,6 @@ namespace EditorX
             field._value = value;
 
             return field;
-        }
-
-        public override string tag
-        {
-            get
-            {
-                return "float";
-            }
         }
 
         protected override void PreGUI()

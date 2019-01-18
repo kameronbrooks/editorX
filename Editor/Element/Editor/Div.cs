@@ -11,17 +11,9 @@ namespace EditorX
         [SerializeField]
         private LayoutType _layoutType;
 
-        public override string tag
-        {
-            get
-            {
-                return "div";
-            }
-        }
-
         protected override void InitializeGUIStyle()
         {
-            if (style.guistyle == null) this.style.guistyle = GUI.skin.box;
+            if (style.guistyle == null) this.style.guistyle = new GUIStyle(GUI.skin.box);
         }
 
         protected override void PreGUI()
@@ -33,11 +25,11 @@ namespace EditorX
             if (name != null && name != "") GUI.SetNextControlName(name);
             if (_layoutType == LayoutType.Horizontal)
             {
-                _rect = EditorGUILayout.BeginHorizontal(style.layoutOptions);
+                _rect = EditorGUILayout.BeginHorizontal(style.guistyle, style.layoutOptions);
             }
             else
             {
-                _rect = EditorGUILayout.BeginVertical(style.layoutOptions);
+                _rect = EditorGUILayout.BeginVertical(style.guistyle, style.layoutOptions);
             }
 
             if (style.backgroundColor != Color.clear)

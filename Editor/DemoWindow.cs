@@ -43,16 +43,26 @@ public class DemoWindow : EditorX.Window
     public override void OnLoadWindow()
     {
         string src = @"
+<head skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin'>
+</head>
 <div>
-    <intfield change='Change_Test'></intfield>
-    <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10' margin='10 10 10 10'>
+    <div layout-type='vertical'>
+        <intfield change='Change_Test'></intfield>
+        <toggle label='toggle 1'></toggle>
+        <enumpopup type='UnityEngine.BatteryStatus' value='Charging' ></enumpopup>
+    </div>
+    
+    <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10'>
         This is some text.
         <intfield name='int1' margin='10 10 10 10'></intfield>
         <floatfield name='float1' hidden='true'></floatfield>
         This is some text.
         <colorfield value='blue'></colorfield>
     </div>
-    <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg'></img>
+    <scrollview>
+        <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg'></img>
+    </scrollview>
+    
 </div>
 ";
         LoadFromMarkup(src);
@@ -68,5 +78,7 @@ public class DemoWindow : EditorX.Window
     {
         ValueElement valElem = (ValueElement)elem;
         ((Img)_img).texture = valElem.GetValue<Texture>();
+
+        
     }
 }

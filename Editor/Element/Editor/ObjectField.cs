@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace EditorX
@@ -16,14 +17,6 @@ namespace EditorX
         [SerializeField]
         private bool _allowSceneObjects = true;
 
-        public override string tag
-        {
-            get
-            {
-                return "object";
-            }
-        }
-
         public bool allowSceneObjects
         {
             get
@@ -33,6 +26,14 @@ namespace EditorX
             set
             {
                 _allowSceneObjects = value;
+            }
+        }
+
+        public override Type valueType
+        {
+            get
+            {
+                return typeof(UnityEngine.Object);
             }
         }
 
@@ -92,7 +93,7 @@ namespace EditorX
                     }
                     else
                     {
-                        Object temp = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(value.ToString());
+                        UnityEngine.Object temp = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(value.ToString());
                         if (temp != null)
                         {
                             _value = temp;
@@ -103,7 +104,9 @@ namespace EditorX
                         }
                     }
                     return true;
-
+                case "allowSceneObjects":
+                    _allowSceneObjects = (value.GetType() == typeof(bool)) ? (bool)value : bool.Parse(value.ToString());
+                    return true;
                 default:
                     return false;
             }
@@ -120,7 +123,9 @@ namespace EditorX
                 case "value":
                     result = _value;
                     break;
-
+                case "allowSceneObjects":
+                    result = _allowSceneObjects;
+                    break;
                 default:
                     break;
             }

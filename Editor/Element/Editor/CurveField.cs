@@ -3,27 +3,28 @@ using UnityEngine;
 
 namespace EditorX
 {
-    public class IntField : ValueElement
+    public class CurveField : ValueElement
     {
         [SerializeField]
-        private int _value;
+        private AnimationCurve _value;
 
         public override System.Type valueType
         {
             get
             {
-                return typeof(int);
+                return typeof(AnimationCurve);
             }
         }
 
-        public static IntField Create(string name, int value = 0)
+        public static CurveField Create(string name, AnimationCurve value = null)
         {
-            IntField field = ScriptableObject.CreateInstance<IntField>();
+            CurveField field = ScriptableObject.CreateInstance<CurveField>();
             field.name = name;
-            field._value = value;
+            if(value != null) field._value = value;
 
             return field;
         }
+
 
         protected override void PreGUI()
         {
@@ -32,9 +33,9 @@ namespace EditorX
         protected override void OnGUI()
         {
             if (name != null && name != "") GUI.SetNextControlName(name);
-            int temp = (_label != null) ?
-                EditorGUILayout.IntField(_label, _value, style.guistyle, style.layoutOptions) :
-                EditorGUILayout.IntField(_value, style.guistyle, style.layoutOptions);
+            AnimationCurve temp = (_label != null) ?
+                EditorGUILayout.CurveField(_label, _value, style.layoutOptions) :
+                EditorGUILayout.CurveField(_value, style.layoutOptions);
             if (temp != _value)
             {
                 _value = temp;
@@ -52,9 +53,7 @@ namespace EditorX
 
             switch (name)
             {
-                case "value":
-                    _value = (value.GetType() == typeof(int)) ? (int)value : int.Parse(value.ToString());
-                    return true;
+
 
                 default:
                     return false;
@@ -69,9 +68,6 @@ namespace EditorX
 
             switch (name)
             {
-                case "value":
-                    result = _value;
-                    break;
 
                 default:
                     break;
@@ -92,7 +88,7 @@ namespace EditorX
 
         public override void SetValue(object val)
         {
-            _value = (int)val;
+            _value = (AnimationCurve)val;
         }
     }
 }

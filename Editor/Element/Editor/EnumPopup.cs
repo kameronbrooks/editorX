@@ -3,43 +3,61 @@ using UnityEngine;
 
 namespace EditorX
 {
-    public class IntField : ValueElement
+    public class EnumPopup : ValueElement
     {
         [SerializeField]
-        private int _value;
+        protected System.Enum _value;
+        [SerializeField]
+        protected string _enumTypeName;
+
+
+        System.Type _enumType;
+        System.Type enumType
+        {
+            get
+            {
+                if(_enumType == null || _enumType.Name != _enumTypeName)
+                {
+                    _enumType = EnumUtility.GetEnumType(_enumTypeName);
+
+
+                   _value = EnumUtility.GetDefaultEnum(_enumType);
+                }
+                return _enumType;
+            }
+        }
 
         public override System.Type valueType
         {
             get
             {
-                return typeof(int);
+                return enumType;
             }
         }
 
-        public static IntField Create(string name, int value = 0)
+        protected override void HandleEvents()
         {
-            IntField field = ScriptableObject.CreateInstance<IntField>();
-            field.name = name;
-            field._value = value;
 
-            return field;
         }
-
         protected override void PreGUI()
         {
         }
 
         protected override void OnGUI()
         {
+
             if (name != null && name != "") GUI.SetNextControlName(name);
-            int temp = (_label != null) ?
-                EditorGUILayout.IntField(_label, _value, style.guistyle, style.layoutOptions) :
-                EditorGUILayout.IntField(_value, style.guistyle, style.layoutOptions);
+            
+            System.Enum temp = (_label != null) ?
+                EditorGUILayout.EnumPopup(_label, _value,  style.layoutOptions) :
+                EditorGUILayout.EnumPopup(_value,  style.layoutOptions);
+                
             if (temp != _value)
             {
                 _value = temp;
                 CallEvent("change");
             }
+            
         }
 
         protected override void PostGUI()
@@ -53,7 +71,11 @@ namespace EditorX
             switch (name)
             {
                 case "value":
-                    _value = (value.GetType() == typeof(int)) ? (int)value : int.Parse(value.ToString());
+                    _value = (value.GetType().IsEnum) ? (System.Enum)value : (System.Enum)System.Enum.Parse(enumType, value.ToString());
+                    return true;
+                case "typename":
+                case "type":
+                    _enumTypeName = value.ToString();
                     return true;
 
                 default:
@@ -72,7 +94,10 @@ namespace EditorX
                 case "value":
                     result = _value;
                     break;
-
+                case "typename":
+                case "type":
+                    result = _enumTypeName;
+                    break;
                 default:
                     break;
             }
@@ -92,7 +117,7 @@ namespace EditorX
 
         public override void SetValue(object val)
         {
-            _value = (int)val;
+            _value = (System.Enum)val;
         }
     }
 }

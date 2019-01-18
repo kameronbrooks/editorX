@@ -7,6 +7,8 @@ namespace EditorX
     public abstract class Window : EditorWindow, ISerializationCallbackReceiver
     {
         [SerializeField]
+        private GUISkin _skin;
+        [SerializeField]
         private Element _body;
 
         [SerializeField]
@@ -42,6 +44,8 @@ namespace EditorX
                 ((Container)_body).window = this;
                 OnLoadWindow();
                 _isLoaded = true;
+
+                _body.Load();
             }
         }
 
@@ -72,6 +76,19 @@ namespace EditorX
             }
         }
 
+        public GUISkin skin
+        {
+            get
+            {
+                return _skin;
+            }
+
+            set
+            {
+                _skin = value;
+            }
+        }
+
         public void Open()
         {
             this.Show();
@@ -83,15 +100,20 @@ namespace EditorX
         {
             Load();
             PreGUI();
+            GUISkin tempSkin = GUI.skin;
+            if (_skin == null) GUI.skin = _skin;
+
             if (_body != null)
             {
                 _body.Draw();
             }
+            GUI.skin = tempSkin;
             PostGUI();
         }
 
         public void OnEnable()
         {
+
         }
 
         public void OnLostFocus()
@@ -119,7 +141,7 @@ namespace EditorX
 
         public void LoadFromMarkup(string markup, UnityEngine.Object callbackTarget = null)
         {
-            EditorXParser parser = new EditorXParser();
+            EditorXParser parser = new EditorXParser(this);
             parser.callbackTarget = (callbackTarget != null) ? callbackTarget : this;
             parser.Initialize();
             Element[] elements = parser.BuildUI(markup);
