@@ -34,6 +34,10 @@ namespace EditorX
         {
         }
 
+        protected virtual void EditorUpdate()
+        {
+            OnEditorUpdate();
+        }
         public abstract void OnLoadWindow();
 
         protected void Load()
@@ -92,7 +96,7 @@ namespace EditorX
         public void Open()
         {
             this.Show();
-            EditorApplication.update += OnEditorUpdate;
+            EditorApplication.update += EditorUpdate;
             OnOpen();
         }
 
@@ -128,7 +132,7 @@ namespace EditorX
 
         public new void Close()
         {
-            EditorApplication.update -= OnEditorUpdate;
+            EditorApplication.update -= EditorUpdate;
             Unload();
             OnClose();
             base.Close();

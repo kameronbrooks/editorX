@@ -45,12 +45,13 @@ public class DemoWindow : EditorX.Window
         string src = @"
 <head skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin'>
 </head>
-<div>
-    <div layout-type='vertical'>
+<div background-color='#333333'>
+    <fadegroup background-color='#777777'>
         <intfield change='Change_Test'></intfield>
         <toggle label='toggle 1'></toggle>
         <enumpopup type='UnityEngine.BatteryStatus' value='Charging' ></enumpopup>
-    </div>
+        <curvefield></curvefield>
+    </fadegroup>
     
     <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10'>
         This is some text.

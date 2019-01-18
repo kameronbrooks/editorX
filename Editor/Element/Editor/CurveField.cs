@@ -32,6 +32,7 @@ namespace EditorX
 
         protected override void OnGUI()
         {
+            if (_value == null) _value = new AnimationCurve();
             if (name != null && name != "") GUI.SetNextControlName(name);
             AnimationCurve temp = (_label != null) ?
                 EditorGUILayout.CurveField(_label, _value, style.layoutOptions) :

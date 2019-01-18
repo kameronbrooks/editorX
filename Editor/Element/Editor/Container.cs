@@ -32,5 +32,10 @@
         {
             DrawChildren();
         }
+
+        public override void RequestRepaint()
+        {
+            window.Repaint();
+        }
     }
 }

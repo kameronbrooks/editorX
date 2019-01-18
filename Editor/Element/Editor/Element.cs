@@ -371,5 +371,17 @@ namespace EditorX
                     return null;
             }
         }
+
+        public virtual void OnEditorUpdate()
+        {
+            for (int i = 0; i < _children.Count; i += 1)
+            {
+                _children[i].OnEditorUpdate();
+            }
+        }
+        public virtual void RequestRepaint()
+        {
+            if (_parent != null) _parent.RequestRepaint();
+        }
     }
 }
