@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace EditorX
 {
+    public enum PositionType { Layout, Absolute};
     [System.Serializable]
     public class Style : ISerializationCallbackReceiver
     {
@@ -27,6 +28,9 @@ namespace EditorX
 
         [SerializeField]
         private Color _bgColor;
+
+        [SerializeField]
+        private PositionType _position;
 
         public Color backgroundColor
         {
@@ -117,7 +121,7 @@ namespace EditorX
             set
             {
                 property = property.ToLower();
-                if (value != null && value.GetType() == typeof(int) && property != "font-size") value = (float)(int)value;
+                if (value != null && value.GetType() == typeof(int)) value = (float)(int)value;
                 if (_data.ContainsKey(property))
                 {
                     _data[property] = value;
@@ -163,13 +167,19 @@ namespace EditorX
             temp = null;
             if (_data.TryGetValue("font-size", out temp) || _data.TryGetValue("fontsize", out temp))
             {
-                _guiStyle.fontSize = (int)temp;
+                _guiStyle.fontSize = (int)(float)temp;
             }
             temp = null;
             if (_data.TryGetValue("alignment", out temp))
             {
                 TextAnchor anchor = (temp.GetType() == typeof(string)) ? (TextAnchor)EnumUtility.GetEnumObject(typeof(TextAnchor),(string)temp) : (TextAnchor)temp;
                 _guiStyle.alignment = anchor;
+            }
+            temp = null;
+            if (_data.TryGetValue("position", out temp))
+            {
+                PositionType postype = (temp.GetType() == typeof(string)) ? (PositionType)EnumUtility.GetEnumObject(typeof(PositionType), (string)temp) : (PositionType)temp;
+                _position = postype;
             }
             temp = null;
             if (_data.TryGetValue("image-position", out temp))
@@ -278,12 +288,16 @@ namespace EditorX
                     value = BinarySerializer.GetColor(bytes, ref index);
                     break;
 
+                case "position":
+                    value = BinarySerializer.GetEnum(bytes, typeof(PositionType), ref index);
+                    break;
+
                 case "font":
                     value = _serializedObjects[BinarySerializer.GetInt(bytes, ref index)];
                     break;
 
                 case "font-size":
-                    value = BinarySerializer.GetInt(bytes, ref index);
+                    value = BinarySerializer.GetFloat(bytes, ref index);
                     break;
 
                 case "font-style":

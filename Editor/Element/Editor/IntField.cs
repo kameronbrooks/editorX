@@ -42,10 +42,6 @@ namespace EditorX
             }
         }
 
-        protected override void PostGUI()
-        {
-        }
-
         public override bool SetProperty(string name, object value)
         {
             if (base.SetProperty(name, value)) return true;

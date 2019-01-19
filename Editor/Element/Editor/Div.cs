@@ -48,9 +48,6 @@ namespace EditorX
             }
         }
 
-        protected override void PostGUI()
-        {
-        }
 
         public override bool SetProperty(string name, object value)
         {

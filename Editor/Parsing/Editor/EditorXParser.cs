@@ -273,6 +273,12 @@ namespace EditorX
                 case "load":
                 case "click":
                 case "change":
+                case "mousedown":
+                case "mouseup":
+                case "mouseenter":
+                case "mouseleave":
+                case "mousedrag":
+                case "mousemove":
                 case "keyup":
                 case "keydown":
                     EventCallback callback = CreateEventCallback(attribute.data);
@@ -364,6 +370,16 @@ namespace EditorX
                             _windowTarget.skin = skin;
                         }
                         
+                        break;
+                    case "repaint-on-scene-change":
+                    case "auto-repaint":
+                    case "autorepaint":
+                    case "auto-repaint-on-scene-change":
+                        _windowTarget.autoRepaintOnSceneChange = bool.Parse(attribute.data);
+                        break;
+                    case "wantsmousemove":
+                    case "wants-mouse-move":
+                        _windowTarget.wantsMouseMove = bool.Parse(attribute.data);
                         break;
                     default:
                         break;

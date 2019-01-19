@@ -16,14 +16,6 @@
             }
         }
 
-        public override string tag
-        {
-            get
-            {
-                return "container";
-            }
-        }
-
         protected override void PreGUI()
         {
         }

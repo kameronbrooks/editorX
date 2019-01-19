@@ -30,6 +30,9 @@ namespace EditorX
         private List<DelegateSerialization.SerializedDelegate> _serializedDelegates;
 
         [SerializeField]
+        private bool _isMouseOver;
+
+        [SerializeField]
         private Style _style;
 
         public Element parent
@@ -77,6 +80,18 @@ namespace EditorX
             get
             {
                 return this.GetType().Name.ToLower();
+            }
+        }
+
+        protected Event currentEvent
+        {
+            get
+            {
+                return Event.current;
+            }
+            set
+            {
+                Event.current = value;
             }
         }
 
@@ -142,6 +157,50 @@ namespace EditorX
 
         protected virtual void PostGUI()
         {
+            HandleEvents();
+        }
+        protected virtual void HandleEvents()
+        {
+            Event e = currentEvent;
+            if (e.type == EventType.Used) return;
+
+            if (_rect == null) return;
+            if(e.isMouse)
+            {
+                if (_rect.Contains(e.mousePosition))
+                {
+                    Debug.Log("MOuse is here");
+                    switch (e.type)
+                    {
+                        case EventType.MouseDown:
+                            CallEvent("mousedown");
+                            currentEvent.Use();
+                            break;
+                        case EventType.MouseUp:
+                            CallEvent("mouseup");
+                            currentEvent.Use();
+                            break;
+                        case EventType.MouseMove:
+                            if (!_isMouseOver) {
+                                CallEvent("mouseenter");
+                                _isMouseOver = true;
+                            }
+                            CallEvent("mousemove");
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+                else
+                {
+                    if(_isMouseOver)
+                    {
+                        CallEvent("mouseleave");
+                        _isMouseOver = false;
+                    }
+                }
+            }
         }
 
         public virtual Element AddChild(Element child)
@@ -213,19 +272,6 @@ namespace EditorX
             }
         }
 
-        protected virtual void HandleEvents()
-        {
-            Event e = Event.current;
-            if (e.type == EventType.Used) return;
-            if (_rect == null) return;
-
-            if (e.type == EventType.KeyUp) CallEvent("keyup");
-            if (e.type == EventType.KeyDown) CallEvent("keydown");
-
-            if (!_rect.Contains(e.mousePosition)) return;
-            if (e.type == EventType.MouseDown) CallEvent("mousedown");
-            if (e.type == EventType.MouseUp) CallEvent("mouseup");
-        }
 
         public virtual void Draw()
         {

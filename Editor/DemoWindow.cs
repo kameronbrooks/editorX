@@ -27,7 +27,6 @@ public class DemoWindow : EditorX.Window
     protected override void PreGUI()
     {
         base.PreGUI();
-        this.reloadOnAssemblyReload = true;
         if (GUILayout.Button("Refresh"))
         {
             Unload();
@@ -43,14 +42,16 @@ public class DemoWindow : EditorX.Window
     public override void OnLoadWindow()
     {
         string src = @"
-<head skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin'>
+<head skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin' wants-mouse-move='true'>
 </head>
 <div background-color='#333333'>
-    <fadegroup background-color='#777777'>
-        <intfield change='Change_Test'></intfield>
-        <toggle label='toggle 1'></toggle>
-        <enumpopup type='UnityEngine.BatteryStatus' value='Charging' ></enumpopup>
-        <curvefield></curvefield>
+    <fadegroup background-color='#777777' label='show'>
+        <div layout-type='vertical' background-color='#777777' padding='5 5 5 5' >
+            <intfield change='Change_Test'></intfield>
+            <toggle label='toggle 1'></toggle>
+            <enumpopup type='UnityEngine.BatteryStatus' value='Charging' ></enumpopup>
+            <curvefield></curvefield>
+        </div>
     </fadegroup>
     
     <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10'>
@@ -61,7 +62,7 @@ public class DemoWindow : EditorX.Window
         <colorfield value='blue'></colorfield>
     </div>
     <scrollview>
-        <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg'></img>
+        <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg' mousedown='MouseClick' mousemove='MouseMove_Callback'></img>
     </scrollview>
     
 </div>
@@ -81,5 +82,15 @@ public class DemoWindow : EditorX.Window
         ((Img)_img).texture = valElem.GetValue<Texture>();
 
         
+    }
+
+    private void MouseMove_Callback(Element elem, Event evnt)
+    {
+        Debug.Log("Tracking mouse at " + evnt.mousePosition);
+    }
+
+    private void MouseClick(Element elem, Event evnt)
+    {
+        Debug.Log(elem.name + " was clicked");
     }
 }
