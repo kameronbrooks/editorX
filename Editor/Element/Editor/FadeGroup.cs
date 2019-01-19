@@ -8,6 +8,7 @@ namespace EditorX
 {
     public class FadeGroup : Element
     {
+        [System.NonSerialized]
         AnimBool _animBool;
 
         [SerializeField]

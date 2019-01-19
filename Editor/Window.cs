@@ -15,7 +15,22 @@ namespace EditorX
         private bool _isLoaded = false;
 
         [SerializeField]
-        private bool _reloadOnAssemblyReload = false;
+        private bool _reloadOnAssemblyReload;
+        [SerializeField]
+        protected bool _wantsMouseMove;
+
+        public new bool wantsMouseMove
+        {
+            get
+            {
+                return base.wantsMouseMove;
+
+            }
+            set
+            {
+                base.wantsMouseMove = _wantsMouseMove = value;
+            }
+        }
 
         protected abstract void OnOpen();
 
@@ -24,14 +39,17 @@ namespace EditorX
         //protected abstract void Draw();
         protected virtual void PreGUI()
         {
+
         }
 
         protected virtual void PostGUI()
         {
+
         }
 
         protected virtual void OnEditorUpdate()
         {
+
         }
 
         protected virtual void EditorUpdate()
@@ -96,7 +114,7 @@ namespace EditorX
         public void Open()
         {
             this.Show();
-            EditorApplication.update += EditorUpdate;
+
             OnOpen();
         }
 
@@ -117,7 +135,13 @@ namespace EditorX
 
         public void OnEnable()
         {
-
+            EditorApplication.update += EditorUpdate;
+        }
+        public void OnDestroy()
+        {
+            EditorApplication.update -= EditorUpdate;
+            Unload();
+            OnClose();
         }
 
         public void OnLostFocus()
@@ -132,7 +156,7 @@ namespace EditorX
 
         public new void Close()
         {
-            EditorApplication.update -= EditorUpdate;
+            
             Unload();
             OnClose();
             base.Close();
@@ -140,7 +164,7 @@ namespace EditorX
 
         public void OnBeforeSerialize()
         {
-            if (_reloadOnAssemblyReload) _isLoaded = false;
+            if (_reloadOnAssemblyReload) _isLoaded = false;          
         }
 
         public void LoadFromMarkup(string markup, UnityEngine.Object callbackTarget = null)
@@ -157,6 +181,7 @@ namespace EditorX
 
         public void OnAfterDeserialize()
         {
+            base.wantsMouseMove = _wantsMouseMove;
         }
 
         public static T NewElement<T>() where T : Element

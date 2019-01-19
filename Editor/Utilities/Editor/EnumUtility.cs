@@ -21,6 +21,10 @@ namespace EditorX
         {
             return (System.Enum)System.Enum.Parse(enumType, name);
         }
+        public static System.Enum GetEnumObject(System.Type enumType, int index)
+        {
+            return (System.Enum)System.Enum.ToObject(enumType, index);
+        }
         public static System.Enum GetDefaultEnum(System.Type enumType)
         {
             string[] names =  System.Enum.GetNames(enumType);

@@ -5,10 +5,12 @@ namespace EditorX
 {
     public class EnumPopup : ValueElement
     {
-        [SerializeField]
+        
         protected System.Enum _value;
         [SerializeField]
         protected string _enumTypeName;
+        [SerializeField]
+        protected int _valueIndex;
 
 
         System.Type _enumType;
@@ -19,7 +21,6 @@ namespace EditorX
                 if(_enumType == null || _enumType.Name != _enumTypeName)
                 {
                     _enumType = EnumUtility.GetEnumType(_enumTypeName);
-
 
                    _value = EnumUtility.GetDefaultEnum(_enumType);
                 }
@@ -47,7 +48,9 @@ namespace EditorX
         {
 
             if (name != null && name != "") GUI.SetNextControlName(name);
-            
+
+            if (_value == null) _value = EnumUtility.GetDefaultEnum(enumType);
+
             System.Enum temp = (_label != null) ?
                 EditorGUILayout.EnumPopup(_label, _value,  style.layoutOptions) :
                 EditorGUILayout.EnumPopup(_value,  style.layoutOptions);
@@ -118,6 +121,17 @@ namespace EditorX
         public override void SetValue(object val)
         {
             _value = (System.Enum)val;
+        }
+
+        public override void OnBeforeSerialize()
+        {
+            base.OnBeforeSerialize();
+            _valueIndex = System.Convert.ToInt32(_value);
+        }
+        public override void OnAfterDeserialize()
+        {
+            base.OnAfterDeserialize();
+            _value = EnumUtility.GetEnumObject(enumType, _valueIndex);
         }
     }
 }

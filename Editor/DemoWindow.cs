@@ -13,6 +13,7 @@ public class DemoWindow : EditorX.Window
     public static void Main()
     {
         DemoWindow window = EditorWindow.GetWindow<DemoWindow>();
+        window.Open();
     }
 
     protected override void OnOpen()
@@ -42,29 +43,33 @@ public class DemoWindow : EditorX.Window
     public override void OnLoadWindow()
     {
         string src = @"
-<head skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin' wants-mouse-move='true'>
-</head>
+<head 
+    skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin' 
+    wants-mouse-move='true'
+></head>
+
 <div background-color='#333333'>
     <fadegroup background-color='#777777' label='show'>
         <div layout-type='vertical' background-color='#777777' padding='5 5 5 5' >
-            <intfield change='Change_Test'></intfield>
-            <toggle label='toggle 1'></toggle>
-            <enumpopup type='UnityEngine.BatteryStatus' value='Charging' ></enumpopup>
-            <curvefield></curvefield>
+            <intfield change='Change_Test'/>
+            <toggle label='toggle 1'/>
+            <enumpopup type='UnityEngine.BatteryStatus' value='Charging' />
+            <curvefield />
         </div>
     </fadegroup>
     
     <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10'>
         This is some text.
-        <intfield name='int1' margin='10 10 10 10'></intfield>
-        <floatfield name='float1' hidden='true'></floatfield>
+        <intfield name='int1' margin='10 10 10 10' />
+        <floatfield name='float1' hidden='true' />
         This is some text.
-        <colorfield value='blue'></colorfield>
+        <colorfield value='blue' />
     </div>
     <scrollview>
-        <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg' mousedown='MouseClick' mousemove='MouseMove_Callback'></img>
+        <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg' mousedown='MouseClick' mousemove='MouseMove_Callback' />
     </scrollview>
     
+
 </div>
 ";
         LoadFromMarkup(src);
@@ -82,6 +87,18 @@ public class DemoWindow : EditorX.Window
         ((Img)_img).texture = valElem.GetValue<Texture>();
 
         
+    }
+
+    int iter = 0;
+    protected override void EditorUpdate()
+    {
+        if(iter < 10)
+        {
+            iter++;
+            return;
+        }
+        Debug.Log("Updating");
+        iter = 0;
     }
 
     private void MouseMove_Callback(Element elem, Event evnt)

@@ -169,7 +169,6 @@ namespace EditorX
             {
                 if (_rect.Contains(e.mousePosition))
                 {
-                    Debug.Log("MOuse is here");
                     switch (e.type)
                     {
                         case EventType.MouseDown:

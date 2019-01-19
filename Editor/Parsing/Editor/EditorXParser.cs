@@ -93,10 +93,14 @@ namespace EditorX
                     }
                     else
                     {
-                        Tag next = ParseTag();
+                        bool isClosed = false;
+                        Tag next = ParseTag(ref isClosed);
                         if (_tagStack.Count > 0) _tagStack.Peek().AddChild(next);
-                        _tagStack.Push(next);
-                        isTagOpen = true;
+                        if (!isClosed)
+                        {
+                            _tagStack.Push(next);
+                            isTagOpen = true;
+                        }                        
                         CullWhiteSpace();
                     }
                 }
@@ -187,7 +191,7 @@ namespace EditorX
             }
         }
 
-        protected Tag ParseTag()
+        protected Tag ParseTag(ref bool isClosed)
         {
             Require('<');
             CullWhiteSpace();
@@ -200,6 +204,14 @@ namespace EditorX
                 CullWhiteSpace();
             }
             CullWhiteSpace();
+            if (Peek() == '/')
+            {
+                isClosed = true;
+                Step();
+            } else
+            {
+                isClosed = false;
+            }
             Require('>');
             return tag;
         }
