@@ -7,10 +7,10 @@ namespace EditorX
     public class ObjectField : ValueElement
     {
         [SerializeField]
-        private UnityEngine.Object _value;
+        protected UnityEngine.Object _value;
 
         [SerializeField]
-        private string _typeName;
+        protected string _typeName;
 
         private System.Type _type;
 
@@ -75,8 +75,13 @@ namespace EditorX
             if (temp != _value)
             {
                 _value = temp;
-                CallEvent("change");
+                OnChange();
             }
+        }
+
+        protected virtual void OnChange()
+        {
+            CallEvent("change");
         }
 
         public override bool SetProperty(string name, object value)

@@ -76,7 +76,7 @@ public class DemoWindow : EditorX.Window
 <hr color='#EEEEEE66' />
 <div>
     <scrollview>
-        <objectfield type='UnityEngine.Texture' />
+        <objecteditor type='UnityEngine.Texture' />
     </scrollview>
 </div>
 
