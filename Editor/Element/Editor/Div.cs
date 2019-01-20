@@ -13,7 +13,12 @@ namespace EditorX
 
         protected override void InitializeGUIStyle()
         {
-            if (style.guistyle == null) this.style.guistyle = new GUIStyle(GUI.skin.box);
+            if (style.guistyle == null)
+            {
+                this.style.guistyle = new GUIStyle(GUI.skin.box);
+                this.style.guistyle.normal.background = null;
+                if (parent != null) this.style.CopyTextProperties(parent.style);
+            }
         }
 
         protected override void PreGUI()

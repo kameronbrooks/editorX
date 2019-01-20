@@ -96,11 +96,15 @@ namespace EditorX
                         bool isClosed = false;
                         Tag next = ParseTag(ref isClosed);
                         if (_tagStack.Count > 0) _tagStack.Peek().AddChild(next);
+                        else
+                        {
+                            if (isClosed) tagList.Add(next);
+                        }
                         if (!isClosed)
                         {
                             _tagStack.Push(next);
                             isTagOpen = true;
-                        }                        
+                        }               
                         CullWhiteSpace();
                     }
                 }
@@ -256,6 +260,8 @@ namespace EditorX
             switch (name)
             {
                 case "name":
+                case "font-style":
+                case "alignment":
                     elem.name = attribute.data;
                     break;
 
@@ -281,6 +287,28 @@ namespace EditorX
                 case "padding":
                 case "margin":
                     elem.style[name] = attribute.data;
+                    break;
+                case "background":
+                    Texture texture = AssetDatabase.LoadAssetAtPath<Texture>(attribute.data);
+                    if (texture == null)
+                    {
+                        Debug.LogWarning("There was no Texture found at path: " + attribute.data);
+                    }
+                    else
+                    {
+                        elem.style[attribute.name] = texture;
+                    }
+                    break;
+                case "font":
+                    Font font = AssetDatabase.LoadAssetAtPath<Font>(attribute.data);
+                    if (font == null)
+                    {
+                        Debug.LogWarning("There was no Font found at path: " + attribute.data);
+                    }
+                    else
+                    {
+                        elem.style[attribute.name] = font;
+                    }
                     break;
                 case "load":
                 case "click":
@@ -392,6 +420,34 @@ namespace EditorX
                     case "wantsmousemove":
                     case "wants-mouse-move":
                         _windowTarget.wantsMouseMove = bool.Parse(attribute.data);
+                        break;
+                    case "background-color":
+                        Debug.Log("bg detected");
+                        _windowTarget.body.style["background-color"] = ColorUtility.ReadColor(attribute.data);
+                        Debug.Log("bg detected" + _windowTarget.body.style[attribute.name]);
+                        break;
+                    case "background":
+                        Texture texture = AssetDatabase.LoadAssetAtPath<Texture>(attribute.data);
+                        if (texture == null)
+                        {
+                            Debug.LogWarning("There was no Texture found at path: " + attribute.data);
+                        }
+                        else
+                        {
+                            _windowTarget.body.style[attribute.name] = texture;
+                        }
+                        break;
+                    case "font":
+                        Font font = AssetDatabase.LoadAssetAtPath<Font>(attribute.data);
+                        if (font == null)
+                        {
+                            Debug.LogWarning("There was no Font found at path: " + attribute.data);
+                        }
+                        else
+                        {
+                            _windowTarget.body.style[attribute.name] = font;
+                        }
+
                         break;
                     default:
                         break;

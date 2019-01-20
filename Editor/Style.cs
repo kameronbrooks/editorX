@@ -36,6 +36,7 @@ namespace EditorX
         {
             get
             {
+                if (isDirty) Update();
                 return _bgColor;
             }
             set
@@ -48,6 +49,7 @@ namespace EditorX
         {
             get
             {
+                if (isDirty) Update();
                 return _guiStyle.normal.textColor;
             }
             set
@@ -67,6 +69,14 @@ namespace EditorX
             {
                 _guiStyle = value;
                 _isDirty = true;
+            }
+        }
+
+        public bool isDirty
+        {
+            get
+            {
+                return _isDirty;
             }
         }
 
@@ -115,6 +125,7 @@ namespace EditorX
             {
                 property = property.ToLower();
                 object value = null;
+                if (isDirty) Update();
                 _data.TryGetValue(property, out value);
                 return value;
             }
@@ -134,7 +145,7 @@ namespace EditorX
             }
         }
 
-        protected virtual void Update()
+        public virtual void Update()
         {
             _layoutOptionsList.Clear();
             object temp = null;
@@ -153,6 +164,11 @@ namespace EditorX
             if (_data.TryGetValue("background-color", out temp) || _data.TryGetValue("backgroundcolor", out temp))
             {
                 backgroundColor = (Color)temp;
+            }
+            temp = null;
+            if (_data.TryGetValue("background", out temp))
+            {
+                _guiStyle.normal.background = (Texture2D)temp;
             }
             temp = null;
             if (_data.TryGetValue("font", out temp))
@@ -287,6 +303,9 @@ namespace EditorX
                 case "background-color":
                     value = BinarySerializer.GetColor(bytes, ref index);
                     break;
+                case "background":
+                    value = _serializedObjects[BinarySerializer.GetInt(bytes, ref index)];
+                    break;
 
                 case "position":
                     value = BinarySerializer.GetEnum(bytes, typeof(PositionType), ref index);
@@ -381,6 +400,33 @@ namespace EditorX
             }
             _serializedData = null;
             _isDirty = true;
+        }
+
+        public void CopyTextProperties(Style original, bool overwrite = false)
+        {
+            if(overwrite)
+            {
+                if (original["color"] != null)
+                {
+                    this["color"] = original["color"];
+                }
+                if (original["font"] != null)
+                {
+                    this["font"] = original["font"];
+                }             
+            } else
+            {
+                if (original["color"] != null && this["color"] == null)
+                {
+                    this["color"] = original["color"];
+                }
+                if (original["font"] != null && this["font"] == null)
+                {
+                    this["font"] = original["font"];
+                }
+            }
+            _isDirty = true;
+
         }
 
         public GUILayoutOption[] layoutOptions

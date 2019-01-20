@@ -104,6 +104,9 @@ namespace EditorX
                         }
                     }
                     return true;
+                case "type":
+                    _type = (value.GetType() == typeof(System.Type)) ? (System.Type)value : TypeUtility.GetTypeByName(value.ToString());
+                    return true;
                 case "allowSceneObjects":
                     _allowSceneObjects = (value.GetType() == typeof(bool)) ? (bool)value : bool.Parse(value.ToString());
                     return true;
@@ -122,6 +125,9 @@ namespace EditorX
             {
                 case "value":
                     result = _value;
+                    break;
+                case "type":
+                    result = _type;
                     break;
                 case "allowSceneObjects":
                     result = _allowSceneObjects;

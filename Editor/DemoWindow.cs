@@ -46,9 +46,11 @@ public class DemoWindow : EditorX.Window
 <head 
     skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin' 
     wants-mouse-move='true'
+    background-color='#313131'
+
 ></head>
 
-<div background-color='#333333'>
+<div color='#eeeeee'>
     <fadegroup background-color='#777777' label='show'>
         <div layout-type='vertical' background-color='#777777' padding='5 5 5 5' >
             <intfield change='Change_Test'/>
@@ -71,7 +73,17 @@ public class DemoWindow : EditorX.Window
     
 
 </div>
+<hr color='#EEEEEE66' />
+<div>
+    <scrollview>
+        <objectfield type='UnityEngine.Texture' />
+    </scrollview>
+</div>
+
+
 ";
+
+
         LoadFromMarkup(src);
     }
 
@@ -103,7 +115,7 @@ public class DemoWindow : EditorX.Window
 
     private void MouseMove_Callback(Element elem, Event evnt)
     {
-        Debug.Log("Tracking mouse at " + evnt.mousePosition);
+        
     }
 
     private void MouseClick(Element elem, Event evnt)

@@ -77,7 +77,7 @@ namespace EditorX
             _isLoaded = false;
         }
 
-        protected Element body
+        public Element body
         {
             get
             {
