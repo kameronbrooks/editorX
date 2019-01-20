@@ -66,6 +66,9 @@ public class DemoWindow : EditorX.Window
         <floatfield name='float1' hidden='true' />
         This is some text.
         <colorfield value='blue' />
+        
+        <textbutton value='text' />
+        <textfield>Txt</textfield>
     </div>
     <scrollview>
         <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg' mousedown='MouseClick' mousemove='MouseMove_Callback' />
@@ -74,11 +77,9 @@ public class DemoWindow : EditorX.Window
 
 </div>
 <hr color='#EEEEEE66' />
-<div>
-    <scrollview>
-        <objecteditor type='UnityEngine.Texture' />
-    </scrollview>
-</div>
+
+<textarea expand-width='true' expand-height='true'>Here is some text.</textarea>
+
 
 
 ";

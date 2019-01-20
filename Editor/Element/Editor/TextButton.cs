@@ -4,30 +4,10 @@ using UnityEngine;
 namespace EditorX
 {
     [System.Serializable]
-    public class ImageButton : Element
+    public class TextButton : Element
     {
         [SerializeField]
-        private Texture _img;
-
-        public Texture img
-        {
-            get
-            {
-                return _img;
-            }
-            set
-            {
-                _img = value;
-            }
-        }
-
-        public override string tag
-        {
-            get
-            {
-                return "imgbutton";
-            }
-        }
+        string _text;
 
         protected override void InitializeGUIStyle()
         {
@@ -40,7 +20,7 @@ namespace EditorX
 
             if (name != null && name != "") GUI.SetNextControlName(name);
 
-            if (GUI.Button(_rect, _img, style.guistyle))
+            if (GUI.Button(_rect, _text, style.guistyle))
             {
                 CallEvent("click");
             }
@@ -52,25 +32,9 @@ namespace EditorX
 
             switch (name)
             {
-                case "texture":
-                case "img":
-                    if (value as Texture != null)
-                    {
-                        _img = (Texture)value;
-                    }
-                    else
-                    {
-                        Texture temp = AssetDatabase.LoadAssetAtPath<Texture>(value.ToString());
-                        if (temp != null)
-                        {
-                            _img = temp;
-                        }
-                        else
-                        {
-                            Debug.LogError("EditorX failed to load image: No texture located at " + value.ToString());
-                        }
-                    }
-
+                case "text":
+                case "value":
+                    _text = value.ToString();
                     return true;
 
                 default:
@@ -86,9 +50,9 @@ namespace EditorX
 
             switch (name)
             {
-                case "texture":
-                case "img":
-                    result = _img;
+                case "text":
+                case "value":
+                    result = _text;
                     break;
 
                 default:

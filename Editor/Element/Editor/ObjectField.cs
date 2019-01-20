@@ -105,7 +105,7 @@ namespace EditorX
                         }
                         else
                         {
-                            Debug.LogError("EditorX failed to load image: No object located at " + value.ToString());
+                            Debug.LogError("EditorX failed to load "+_type.Name+": No object located at " + value.ToString());
                         }
                     }
                     return true;

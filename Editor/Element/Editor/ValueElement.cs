@@ -105,5 +105,11 @@ namespace EditorX
 
             return result;
         }
+
+        public override Element AddChild(Element child)
+        {
+            Debug.LogWarning("Cannot add children to elements of type " + tag);
+            return null;
+        }
     }
 }
