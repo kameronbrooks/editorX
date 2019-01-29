@@ -160,11 +160,11 @@ namespace EditorX
             return true;
         }
 
-        protected string ParseIdentifier()
+        protected string ParseIdentifier(string allowedChars = "-_")
         {
             System.Text.StringBuilder builder = new System.Text.StringBuilder();
 
-            while (char.IsLetterOrDigit(Peek()) || Peek() == '-' || Peek() == '_')
+            while (char.IsLetterOrDigit(Peek()) || allowedChars.IndexOf(Peek()) >= 0)
             {
                 builder.Append(Step());
             }
@@ -491,7 +491,7 @@ namespace EditorX
 
         protected Tag.Attribute ParseKVP()
         {
-            string identifier = ParseIdentifier();
+            string identifier = ParseIdentifier("-_.");
             CullWhiteSpace();
             Require('=');
             CullWhiteSpace();

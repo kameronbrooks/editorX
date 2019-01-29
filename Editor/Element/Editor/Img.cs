@@ -54,6 +54,8 @@ namespace EditorX
 
             switch (name)
             {
+                case "img":
+                case "value":
                 case "texture":
                 case "src":
                     if (value as Texture != null)
@@ -73,7 +75,9 @@ namespace EditorX
                         }
                     }
                     return true;
-
+                case "scale-mode":
+                    _scaleMode = (ScaleMode)EnumUtility.GetEnumObject(typeof(ScaleMode), value.ToString());
+                    return true;
                 default:
                     return false;
             }
@@ -90,7 +94,8 @@ namespace EditorX
                 case "texture":
                     result = _texture;
                     break;
-
+                case "scale-mode":
+                    return _scaleMode;
                 default:
                     break;
             }

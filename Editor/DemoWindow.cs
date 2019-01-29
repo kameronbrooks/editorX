@@ -48,37 +48,15 @@ public class DemoWindow : EditorX.Window
     wants-mouse-move='true'
     background-color='#313131'
 
-></head>
-
-<div color='#eeeeee'>
-    <fadegroup background-color='#777777' label='show'>
-        <div layout-type='vertical' background-color='#777777' padding='5 5 5 5' >
-            <intfield change='Change_Test'/>
-            <toggle label='toggle 1'/>
-            <enumpopup type='UnityEngine.BatteryStatus' value='Charging' />
-            <curvefield />
-        </div>
-    </fadegroup>
-    
-    <div layout-type='vertical' color='red' background-color='#00000055' padding='10 10 10 10'>
-        This is some text.
-        <intfield name='int1' margin='10 10 10 10' />
-        <floatfield name='float1' hidden='true' />
-        This is some text.
-        <colorfield value='blue' />
-        
-        <textbutton value='text' />
-        <textfield>Txt</textfield>
-    </div>
-    <scrollview>
-        <img width='255' height='255' texture='Assets/EditorX/Demo/ccl.jpg' mousedown='MouseClick' mousemove='MouseMove_Callback' />
-    </scrollview>
-    
-
-</div>
-<hr color='#EEEEEE66' />
-
-<textarea expand-width='true' expand-height='true'>Here is some text.</textarea>
+/>
+<tabgroup background-color='#777777' padding='10 10 10 10' color='#EEEEEE'>
+    <tabview name='tab 1'>
+        <img width='128' height='128' value='Assets/EditorX/Demo/ccl.jpg' />
+    </tabview>
+    <tabview name='tab 2'>
+        This is tab 2
+    </tabview>
+</tabgroup>
 
 
 
