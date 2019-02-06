@@ -5,8 +5,6 @@ namespace EditorX
 {
     public class IntSlider : IntField
     {
-        [SerializeField]
-        private int _value;
 
         [SerializeField]
         private int _lvalue;

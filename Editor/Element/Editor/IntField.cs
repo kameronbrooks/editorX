@@ -6,7 +6,7 @@ namespace EditorX
     public class IntField : ValueElement
     {
         [SerializeField]
-        private int _value;
+        protected int _value;
 
         public override System.Type valueType
         {

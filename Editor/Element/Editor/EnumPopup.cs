@@ -104,7 +104,7 @@ namespace EditorX
                 default:
                     break;
             }
-
+            
             return result;
         }
 

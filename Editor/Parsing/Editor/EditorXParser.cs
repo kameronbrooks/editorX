@@ -260,13 +260,20 @@ namespace EditorX
             switch (name)
             {
                 case "name":
+                    elem.name = attribute.data;
+                    break;
                 case "font-style":
                 case "alignment":
-                    elem.name = attribute.data;
+                case "position":
+                    elem.style[name] = attribute.data;
                     break;
 
                 case "width":
                 case "height":
+                case "top":
+                case "bottom":
+                case "right":
+                case "left":
                 case "min-width":
                 case "min-height":
                 case "max-width":
@@ -422,7 +429,6 @@ namespace EditorX
                         _windowTarget.wantsMouseMove = bool.Parse(attribute.data);
                         break;
                     case "background-color":
-                        Debug.Log("bg detected");
                         _windowTarget.body.style["background-color"] = ColorUtility.ReadColor(attribute.data);
                         Debug.Log("bg detected" + _windowTarget.body.style[attribute.name]);
                         break;

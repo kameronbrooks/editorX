@@ -57,5 +57,10 @@ namespace EditorX
         {
             window.Repaint();
         }
+
+        public override Window GetWindow()
+        {
+            return _window;
+        }
     }
 }

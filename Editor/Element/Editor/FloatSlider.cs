@@ -3,33 +3,19 @@ using UnityEngine;
 
 namespace EditorX
 {
-    public class FloatSlider : IntField
+    public class FloatSlider : FloatField
     {
-        [SerializeField]
-        private float _value;
-
         [SerializeField]
         private float _lvalue;
 
         [SerializeField]
         private float _rvalue;
 
-        public static FloatSlider Create(string name, float value = 0, float lval = 0, float rval = 10)
-        {
-            FloatSlider field = ScriptableObject.CreateInstance<FloatSlider>();
-            field.name = name;
-            field._value = value;
-            field._lvalue = lval;
-            field._rvalue = rval;
-
-            return field;
-        }
-
         public override string tag
         {
             get
             {
-                return "intslider";
+                return "floatslider";
             }
         }
 
@@ -66,11 +52,13 @@ namespace EditorX
 
                 case "rvalue":
                 case "right-value":
+                case "min":
                     _rvalue = (value.GetType() == typeof(float)) ? (float)value : float.Parse(value.ToString());
                     return true;
 
                 case "lvalue":
                 case "left-value":
+                case "max":
                     _lvalue = (value.GetType() == typeof(float)) ? (float)value : float.Parse(value.ToString());
                     return true;
 

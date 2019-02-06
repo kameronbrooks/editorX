@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace EditorX
 {
-    public enum PositionType { Layout, Absolute};
+    public enum PositionType { Layout, Relative, Absolute};
     [System.Serializable]
     public class Style : ISerializationCallbackReceiver
     {
@@ -31,6 +32,9 @@ namespace EditorX
 
         [SerializeField]
         private PositionType _position;
+
+        [SerializeField]
+        private Vector4 _rectOffsets;
 
         public Color backgroundColor
         {
@@ -258,7 +262,8 @@ namespace EditorX
 
         protected void SerializeProperty(string name, object property, List<byte> buffer)
         {
-            buffer.AddRange(BinarySerializer.GetBytes(name));
+            byte[] bytes = BinarySerializer.GetBytes(name);
+            buffer.AddRange(bytes);
             int objectIndex = -1;
             switch (name)
             {
@@ -275,42 +280,41 @@ namespace EditorX
                 default:
                     break;
             }
+
             if (objectIndex >= 0)
             {
                 buffer.AddRange(BinarySerializer.GetBytes(objectIndex));
             }
             else
             {
-                buffer.AddRange(BinarySerializer.GetBytes(property));
+
+                bytes = BinarySerializer.GetBytes(property);
+                buffer.AddRange(bytes);
             }
         }
 
         protected void DeserializeProperty(byte[] bytes, ref int index)
         {
+
             string propname = BinarySerializer.GetString(bytes, ref index);
             object value = null;
 
             switch (propname)
             {
                 case "width":
-                    value = BinarySerializer.GetFloat(bytes, ref index);
-                    break;
-
                 case "height":
+                case "top":
+                case "bottom":
+                case "left":
+                case "right":
                     value = BinarySerializer.GetFloat(bytes, ref index);
                     break;
-
                 case "background-color":
                     value = BinarySerializer.GetColor(bytes, ref index);
                     break;
                 case "background":
                     value = _serializedObjects[BinarySerializer.GetInt(bytes, ref index)];
                     break;
-
-                case "position":
-                    value = BinarySerializer.GetEnum(bytes, typeof(PositionType), ref index);
-                    break;
-
                 case "font":
                     value = _serializedObjects[BinarySerializer.GetInt(bytes, ref index)];
                     break;
@@ -318,23 +322,11 @@ namespace EditorX
                 case "font-size":
                     value = BinarySerializer.GetFloat(bytes, ref index);
                     break;
-
+                case "position":
                 case "font-style":
-                    value = (FontStyle)BinarySerializer.GetEnum(bytes, typeof(FontStyle), ref index);
-                    break;
-
                 case "alignment":
-                    value = (TextAlignment)BinarySerializer.GetEnum(bytes, typeof(TextAlignment), ref index);
-                    break;
-
                 case "image-position":
-                    value = (ImagePosition)BinarySerializer.GetEnum(bytes, typeof(ImagePosition), ref index);
-                    break;
-
                 case "margin":
-                    value = BinarySerializer.GetString(bytes, ref index);
-                    break;
-
                 case "padding":
                     value = BinarySerializer.GetString(bytes, ref index);
                     break;
@@ -440,5 +432,73 @@ namespace EditorX
                 return _layoutOptions;
             }
         }
+
+        public PositionType position
+        {
+            get
+            {
+                return _position;
+            }
+
+            set
+            {
+                _position = value;
+            }
+        }
+
+        public Rect GetRect(Rect parent)
+        {
+            if (_isDirty) Update();
+            if (_position == PositionType.Layout)
+            {
+                return EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, guistyle, layoutOptions);
+            }
+            Rect rect = parent;
+            object temp = null;
+            if (_data.TryGetValue("top", out temp))
+            {
+                rect.yMin = rect.yMin + (float)temp;
+
+                if (_data.TryGetValue("height", out temp))
+                {
+                    rect.yMax = rect.yMin + (float)temp;
+                }
+            }
+            temp = null;
+            if (_data.TryGetValue("bottom", out temp))
+            {
+                rect.yMax = rect.yMax - (float)temp;
+
+                if (_data.TryGetValue("height", out temp))
+                {
+                    rect.yMin = rect.yMax - (float)temp;
+                }
+            }
+            temp = null;
+            if (_data.TryGetValue("left", out temp))
+            {
+                rect.xMin = rect.xMin + (float)temp;
+
+                if (_data.TryGetValue("width", out temp))
+                {
+                    rect.xMax = rect.xMin + (float)temp;
+                }
+            }
+            temp = null;
+            if (_data.TryGetValue("right", out temp))
+            {
+                rect.xMax = rect.xMax - (float)temp;
+
+                if (_data.TryGetValue("width", out temp))
+                {
+                    rect.xMin = rect.xMax - (float)temp;
+                }
+            }
+            return rect;
+
+
+        }
+
+
     }
 }

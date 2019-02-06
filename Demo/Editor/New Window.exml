@@ -1,0 +1,47 @@
+<head 
+    skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin'
+    background-color="#333333" 
+    wants-mouse-move="true"
+/>
+<tabgroup background-color="#666666" padding="4 4 4 4" color="#EEEEEE">
+    <tabview name="Tab 1">
+        This is tab 1
+    </tabview>
+    <tabview name="Tab 2">
+        <div layout-type='vertical' color="#EEEEEE">
+            <floatfield label='float' value='1.0' />
+            <intfield label='int' value='1' />
+            <hr />
+            <div>
+                <textbutton width='100' value='button1' />
+                <textbutton width='100' value='button2' />
+                <textbutton width='100' value='button3' />
+            </div>
+        </div>
+        <hr />
+        <div layout-type='vertical' color="#EEEEEE">
+            Color:
+            <colorfield value='#EE0000' />
+            <vector3field label='int' value='1 1 1' />
+            
+        </div>
+        <hr />
+        <div layout-type='vertical' color="#EEEEEE">
+            Slider 1:
+            <floatslider value='1.0' left-value='0.0' right-value='2.0' />
+            Slider 2:
+            <intslider value='1' left-value='0' right-value='10' />
+            
+        </div>
+        <hr />
+        <div layout-type='vertical' color="#EEEEEE">
+            Enum Test:
+            <enumpopup typename='UnityEngine.BatteryStatus' />
+        
+        </div>
+    </tabview>
+</tabgroup>
+
+<img position='absolute' right='10' top='10' width='32' height='32' src='Assets/EditorX/Demo/ccl.jpg' />
+<img position='absolute' right='10' bottom='10' width='32' height='32' src='Assets/EditorX/Demo/ccl.jpg' />
+<img position='absolute' left='10' bottom='10' width='32' height='32' src='Assets/EditorX/Demo/ccl.jpg' />

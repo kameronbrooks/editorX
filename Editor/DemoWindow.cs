@@ -42,28 +42,9 @@ public class DemoWindow : EditorX.Window
 
     public override void OnLoadWindow()
     {
-        string src = @"
-<head 
-    skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin' 
-    wants-mouse-move='true'
-    background-color='#313131'
-
-/>
-<tabgroup background-color='#777777' padding='10 10 10 10' color='#EEEEEE'>
-    <tabview name='tab 1'>
-        <img width='128' height='128' value='Assets/EditorX/Demo/ccl.jpg' />
-    </tabview>
-    <tabview name='tab 2'>
-        This is tab 2
-    </tabview>
-</tabgroup>
 
 
-
-";
-
-
-        LoadFromMarkup(src);
+        LoadFromFile("EditorX/Demo/Editor/New Window.exml");
     }
 
     private void Change_Test(Element elem, Event evnt)
@@ -88,7 +69,7 @@ public class DemoWindow : EditorX.Window
             iter++;
             return;
         }
-        Debug.Log("Updating");
+
         iter = 0;
     }
 

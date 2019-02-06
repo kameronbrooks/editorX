@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 namespace EditorX
 {
@@ -177,6 +178,18 @@ namespace EditorX
             {
                 body.AddChild(elements[i]);
             }
+        }
+        public void LoadFromFile(string unityPath, UnityEngine.Object callbackTarget = null)
+        {
+            string fullPath = Application.dataPath + "/" + unityPath;
+            if (!File.Exists(fullPath))
+            {
+                throw new System.IO.FileNotFoundException("No file found at " + fullPath);
+            }
+
+            string markup = File.ReadAllText(fullPath);
+
+            LoadFromMarkup(markup, callbackTarget);
         }
 
         public void OnAfterDeserialize()

@@ -211,7 +211,9 @@ namespace EditorX
         public static System.Enum GetEnum(byte[] data, Type enumType, ref int index)
         {
             int result = BitConverter.ToInt32(data, index);
+            Debug.Log("enum result =" + result);
             index += sizeof(int);
+
             return (System.Enum)System.Enum.ToObject(enumType, result);
         }
 
@@ -254,6 +256,7 @@ namespace EditorX
         {
             int length = BitConverter.ToInt32(data, index);
             index += sizeof(int);
+
             string result = System.Text.Encoding.Unicode.GetString(data, index, length * sizeof(char));
             index += length * sizeof(char);
             return result;

@@ -18,6 +18,8 @@ namespace EditorX
 
         GUIContent[] _tabNames;
 
+        int _nextTab = 0;
+
         protected void UpdateTabNames()
         {
             int count = children.Count;
@@ -84,7 +86,7 @@ namespace EditorX
                     {
                         if(i != _selectedTab)
                         {
-                            _selectedTab = i;
+                            _nextTab = i;
                             RequestRepaint();
                             CallEvent("change");
                         }
@@ -102,15 +104,20 @@ namespace EditorX
         }
         protected override void OnGUI()
         {
+            if(Event.current.type == EventType.Layout)
+            {
+                if (_nextTab != _selectedTab) _selectedTab = _nextTab;
+            }
+
             _rect = EditorGUILayout.BeginVertical(style.layoutOptions);
             Rect tabBarRect = EditorGUILayout.BeginHorizontal(GUILayout.Height(_tabBarHeight), GUILayout.ExpandWidth(true));
             DrawTabs();
             EditorGUILayout.EndHorizontal();
 
-            Rect tabPageRect = EditorGUILayout.BeginHorizontal(style.guistyle, GUILayout.ExpandWidth(true), GUILayout.MinHeight(30));
+            Rect tabPageRect = EditorGUILayout.BeginVertical(style.guistyle, GUILayout.ExpandWidth(true), GUILayout.MinHeight(30));
             EditorGUI.DrawRect(tabPageRect, style.backgroundColor);
             children[_selectedTab].Draw();
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
 
 
             EditorGUILayout.EndVertical();

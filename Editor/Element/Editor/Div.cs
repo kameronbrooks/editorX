@@ -27,30 +27,47 @@ namespace EditorX
 
         protected override void OnGUI()
         {
-            if (name != null && name != "") GUI.SetNextControlName(name);
-            if (_layoutType == LayoutType.Horizontal)
+            //if (name != null && name != "") GUI.SetNextControlName(name);
+            if (style.position == PositionType.Layout)
             {
-                _rect = EditorGUILayout.BeginHorizontal(style.guistyle, style.layoutOptions);
+                if (_layoutType == LayoutType.Horizontal)
+                {
+                    _rect = EditorGUILayout.BeginHorizontal(style.guistyle, style.layoutOptions);
+                }
+                else
+                {
+                    _rect = EditorGUILayout.BeginVertical(style.guistyle, style.layoutOptions);
+                }
+
+                if (style.backgroundColor != Color.clear)
+                {
+                    EditorGUI.DrawRect(_rect, style.backgroundColor);
+                }
+                DrawChildren();
+
+                if (_layoutType == LayoutType.Horizontal)
+                {
+                    EditorGUILayout.EndHorizontal();
+                }
+                else
+                {
+                    EditorGUILayout.EndVertical();
+                }
             }
             else
             {
-                _rect = EditorGUILayout.BeginVertical(style.guistyle, style.layoutOptions);
-            }
+                _rect = style.GetRect(parent.rect);
+                GUI.BeginGroup(_rect, style.guistyle);
+                if (style.backgroundColor != Color.clear)
+                {
+                    EditorGUI.DrawRect(_rect, style.backgroundColor);
+                }
+                DrawChildren();
 
-            if (style.backgroundColor != Color.clear)
-            {
-                EditorGUI.DrawRect(_rect, style.backgroundColor);
+                GUI.EndGroup();
             }
-            DrawChildren();
-
-            if (_layoutType == LayoutType.Horizontal)
-            {
-                EditorGUILayout.EndHorizontal();
-            }
-            else
-            {
-                EditorGUILayout.EndVertical();
-            }
+            
+            
         }
 
 

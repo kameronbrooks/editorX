@@ -150,7 +150,8 @@ namespace EditorX
 
         protected virtual void PreGUI()
         {
-            _rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, _style.guistyle, _style.layoutOptions);
+            _rect = _style.GetRect(parent.rect);
+            
         }
 
         protected abstract void OnGUI();
@@ -427,6 +428,11 @@ namespace EditorX
         public virtual void RequestRepaint()
         {
             if (_parent != null) _parent.RequestRepaint();
+        }
+        public virtual Window GetWindow()
+        {
+            if (_parent != null) return _parent.GetWindow();
+            return null;
         }
     }
 }

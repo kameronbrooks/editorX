@@ -6,7 +6,7 @@ namespace EditorX
     public class FloatField : ValueElement
     {
         [SerializeField]
-        private float _value;
+        protected float _value;
 
         public override System.Type valueType
         {
