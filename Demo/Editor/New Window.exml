@@ -1,11 +1,17 @@
 <head 
     skin='Assets/EditorX/Demo/Editor/DemoSkin.guiskin'
     background-color="#333333" 
-    wants-mouse-move="true"
+    wants-mouse-move="false"
 />
 <tabgroup background-color="#666666" padding="4 4 4 4" color="#EEEEEE">
     <tabview name="Tab 1">
-        This is tab 1
+        <list type="UnityEngine.Vector3" count="2" height="300">
+            <listitem>
+                <floatfield name="x" />
+                <floatfield name="y" />
+                <floatfield name="z" />
+            </listitem>
+        </list>
     </tabview>
     <tabview name="Tab 2">
         <div layout-type='vertical' color="#EEEEEE">
@@ -39,6 +45,7 @@
             <enumpopup typename='UnityEngine.BatteryStatus' />
         
         </div>
+        
     </tabview>
 </tabgroup>
 

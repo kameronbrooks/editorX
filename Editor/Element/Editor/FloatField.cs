@@ -35,6 +35,7 @@ namespace EditorX
             float temp = (_label != null) ?
                 EditorGUILayout.FloatField(_label, _value, style.guistyle, style.layoutOptions) :
                 EditorGUILayout.FloatField(_value, style.guistyle, style.layoutOptions);
+            
             if (temp != _value)
             {
                 _value = temp;

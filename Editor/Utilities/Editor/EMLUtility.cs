@@ -8,7 +8,7 @@ namespace EditorX
 {
     public static class EMLUtility
     {
-        [MenuItem("NewEMLFile", menuItem = "Assets/Create/EXML File")]
+        [MenuItem("NewEXMLFile", menuItem = "Assets/Create/EXML File")]
         public static void NewEMLFile()
         {
             Object ob = Selection.activeObject;

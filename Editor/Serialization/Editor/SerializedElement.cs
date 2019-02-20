@@ -93,7 +93,7 @@ namespace EditorX
 
             public T GetObject<T>() where T : new()
             {
-                return BinarySerializer.GetObject<T>(_bytes);
+                return BinarySerializer.GetClass<T>(_bytes);
             }
 
             public bool GetBool(int index = 0)
@@ -135,7 +135,7 @@ namespace EditorX
             {
                 return (string)BinarySerializer.GetPrimitive(_bytes, typeof(string), ref index);
             }
-
+ 
             public T[] GetArray<T>(int index = 0)
             {
                 return (T[])BinarySerializer.GetPrimitive(_bytes, typeof(T[]), ref index);

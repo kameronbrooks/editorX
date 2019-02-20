@@ -65,6 +65,7 @@ namespace EditorX
         public static byte[] GetBytes(IList list)
         {
             List<byte> bytes = new List<byte>();
+            bytes.AddRange(GetBytes(list.Count));
             for (int i = 0; i < list.Count; i += 1)
             {
                 bytes.AddRange(GetBytes(list[i]));
@@ -262,6 +263,17 @@ namespace EditorX
             return result;
         }
 
+        public static IList GetList(byte[] data, ref int index, System.Type type)
+        {
+            int count = GetInt(data, ref index);
+            IList list = TypeUtility.GetArrayOfType(type, count);
+            for(int i = 0; i < count; i += 1)
+            {
+                list[i] = GetPrimitive(data, type, ref index);
+            }
+            return list;
+        }
+
         public static Vector2 GetVector2(byte[] data, ref int index)
         {
             float x = GetFloat(data, ref index);
@@ -322,7 +334,7 @@ namespace EditorX
             return new Quaternion(x, y, z, w);
         }
 
-        public static object GetPrimitive(byte[] data, Type type, ref int index)
+        public static object GetPrimitive(byte[] data, Type type, ref int index, bool returnNullOnFail = false)
         {
             if (type == typeof(bool)) return GetBool(data, ref index);
             if (type == typeof(char)) return GetBool(data, ref index);
@@ -381,21 +393,40 @@ namespace EditorX
                 float w = GetFloat(data, ref index);
                 return new Quaternion(x, y, z, w);
             }
-            if (type.IsArray)
-            {
-                int length = GetInt(data, ref index);
-                IList list = Array.CreateInstance(type.GetElementType(), length);
-                for (int i = 0; i < length; i += 1)
-                {
-                    list[i] = GetPrimitive(data, type.GetElementType(), ref index);
-                }
-                return list;
-            }
 
-            throw new Exception(type.Name + " is not a supported primitive");
+            if (returnNullOnFail)
+            {
+                return null;
+            } else
+            {
+                throw new Exception(type.Name + " is not a supported primitive");
+            }
+            
         }
 
-        public static T GetObject<T>(byte[] bytes, ref T t)
+        public static object GetObject(byte[] data, Type type, ref int index)
+        {
+            object result = GetPrimitive(data, type, ref index, true);
+            if (result != null) return result;
+
+            return GetClass(data, type, ref index);
+        }
+
+
+        public static object GetClass(byte[] bytes, Type type, ref int index)
+        {
+            FieldInfo[] fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public);
+            object result = type.GetConstructor(new Type[0]).Invoke(new object[0]);
+            for (int i = 0; i < fields.Length; i += 1)
+            {
+                Type fieldType = fields[i].FieldType;
+                fields[i].SetValue(result, GetPrimitive(bytes, fieldType, ref index));
+            }
+
+            return result;
+        }
+
+        public static T GetClass<T>(byte[] bytes, ref T t)
         {
             FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public);
             int index = 0;
@@ -408,7 +439,7 @@ namespace EditorX
             return t;
         }
 
-        public static T GetObject<T>(byte[] bytes) where T : new()
+        public static T GetClass<T>(byte[] bytes) where T : new()
         {
             T t = new T();
             FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public);
@@ -421,5 +452,6 @@ namespace EditorX
 
             return t;
         }
+
     }
 }
