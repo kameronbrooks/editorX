@@ -92,7 +92,11 @@ namespace EditorX
             {
                 case "value":
                 case "path":
-                    if (value as UnityEngine.Object)
+                    if (value == null || value.ToString() == "null")
+                    {
+                        _value = null;
+                    }
+                    else if (value as UnityEngine.Object)
                     {
                         _value = (UnityEngine.Object)value;
                     }
@@ -140,7 +144,6 @@ namespace EditorX
                 default:
                     break;
             }
-
             return result;
         }
 

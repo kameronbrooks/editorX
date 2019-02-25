@@ -119,28 +119,13 @@ namespace EditorX
         public void AddItem(object ob)
         {
             if (_list == null) _list = TypeUtility.GetArrayOfType(dataType, 0);
-            IList temp = _list;
-
-            _list = TypeUtility.GetArrayOfType(dataType, temp.Count + 1);
-            for (int i = 0; i < temp.Count; i += 1)
-            {
-                _list[i] = temp[i];
-            }
-            _list[_list.Count - 1] = ob;
+            _list.Add(ob);
         }
         public void RemoveItem(int index)
         {
             if (_list == null || _list.Count < 1) return;
-            IList temp = _list;
-            
-            _list = TypeUtility.GetArrayOfType(dataType, temp.Count - 1);
-            int j = 0;
-            for (int i = 0; i < temp.Count; i += 1)
-            {
-                if (i == index) continue;
-                _list[j] = temp[i];
-                j++;
-            }
+            _list.RemoveAt(index);
+
         }
         protected void ResizeArray(int newSize)
         {
@@ -180,7 +165,7 @@ namespace EditorX
             switch (name)
             {
                 case "value":
-
+                    _list = (IList)value;
                     return true;
                 case "count":
                     int val = (value.GetType() == typeof(string)) ? Int32.Parse((string)value) : (int)value;
@@ -239,36 +224,11 @@ namespace EditorX
         public override void OnBeforeSerialize()
         {
             base.OnBeforeSerialize();
-            if (dataType.IsInstanceOfType(typeof(UnityEngine.Object)))
-            {
-                _serializedReference = new UnityEngine.Object[_list.Count];
-                for(int i = 0; i < _list.Count; i += 1)
-                {
-                    _serializedReference[i] = (UnityEngine.Object)_list[i];
-                }
-            }
-            else
-            {
-                _serializedBytes = BinarySerializer.GetBytes(_list);
-            }           
         }
         public override void OnAfterDeserialize()
         {
             base.OnAfterDeserialize();
-            
-            if (dataType.IsInstanceOfType(typeof(UnityEngine.Object)))
-            {
-                _list = TypeUtility.GetArrayOfType(dataType, _serializedReference.Length);
-                for (int i = 0; i < _list.Count; i += 1)
-                {
-                    _list[i] = _serializedReference[i];
-                }
-            }
-            else
-            {
-                int i = 0;
-                _list = BinarySerializer.GetList(_serializedBytes, ref i, dataType);
-            }
+
         }
     }
 }

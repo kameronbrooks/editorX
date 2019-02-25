@@ -1,13 +1,47 @@
 ﻿using EditorX;
 using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
+[System.Serializable]
 public class DemoWindow : EditorX.Window
 {
     private Element floatField;
     private Img _img;
     private ImageButton _imageButton;
     private Texture _texture;
+
+    [System.Serializable]
+    public class MaterialSettings
+    {
+
+        [SerializeField]
+        string _name;
+        [SerializeField]
+        int _size;
+        [SerializeField]
+        Material _mat;
+        [SerializeField]
+        Texture _tex;
+
+        public MaterialSettings(string name)
+        {
+            _name = name;
+        }
+
+        public override string ToString()
+        {
+            return "MaterialSettings: " + _name;
+        }
+
+        public void OpenWindow()
+        {
+            EditorUtility.SaveFilePanel("Title", "", "", "");
+        }
+    }
+
+    [SerializeField]
+    List<MaterialSettings> _matList;
 
     [MenuItem("Tools/Test")]
     public static void Main()
@@ -43,8 +77,13 @@ public class DemoWindow : EditorX.Window
     public override void OnLoadWindow()
     {
 
-
+        _matList = new List<MaterialSettings>();
+        _matList.Add(new MaterialSettings("1"));
+        _matList.Add(new MaterialSettings("2"));
+        _matList.Add(new MaterialSettings("3"));
         LoadFromFile("EditorX/Demo/Editor/New Window.exml");
+
+        GetElementByID("matlist").SetProperty("value", _matList);
     }
 
     private void Change_Test(Element elem, Event evnt)
@@ -81,5 +120,29 @@ public class DemoWindow : EditorX.Window
     private void MouseClick(Element elem, Event evnt)
     {
         Debug.Log(elem.name + " was clicked");
+    }
+
+    protected override void OnSerialize()
+    {
+    
+    }
+
+    protected override void OnDeserialize()
+    {
+        
+
+    }
+
+    protected override void OnAssemblyReload()
+    {
+        if(_matList == null)
+        {
+            _matList = new List<MaterialSettings>();
+            _matList.Add(new MaterialSettings("1"));
+            _matList.Add(new MaterialSettings("2"));
+            _matList.Add(new MaterialSettings("3"));
+        }
+        
+        GetElementByID("matlist").SetProperty("value", _matList);
     }
 }

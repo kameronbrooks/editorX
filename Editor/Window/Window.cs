@@ -19,6 +19,7 @@ namespace EditorX
         private bool _reloadOnAssemblyReload;
         [SerializeField]
         protected bool _wantsMouseMove;
+        protected bool _wasAssemblyReloaded;
 
         public new bool wantsMouseMove
         {
@@ -122,6 +123,12 @@ namespace EditorX
         protected virtual void OnGUI()
         {
             Load();
+
+            if ( _wasAssemblyReloaded )
+            {
+                OnAssemblyReload();
+                _wasAssemblyReloaded = false;
+            }
             PreGUI();
             GUISkin tempSkin = GUI.skin;
             if (_skin == null) GUI.skin = _skin;
@@ -165,7 +172,8 @@ namespace EditorX
 
         public void OnBeforeSerialize()
         {
-            if (_reloadOnAssemblyReload) _isLoaded = false;          
+            if (_reloadOnAssemblyReload) _isLoaded = false;
+            OnSerialize();
         }
 
         public void LoadFromMarkup(string markup, UnityEngine.Object callbackTarget = null)
@@ -192,10 +200,31 @@ namespace EditorX
             LoadFromMarkup(markup, callbackTarget);
         }
 
+        public Element GetElementByID(string name)
+        {
+            return _body.GetChildById(name);
+        }
+
         public void OnAfterDeserialize()
         {
             base.wantsMouseMove = _wantsMouseMove;
+            _wasAssemblyReloaded = true;
+            OnDeserialize();
         }
+
+        protected virtual void OnSerialize()
+        {
+
+        }
+        protected virtual void OnDeserialize()
+        {
+
+        }
+        /// <summary>
+        /// This will be called after an assembly reload, use it to bind you non-serialized data back to its element after it is lost in the reload
+        /// </summary>
+        protected abstract void OnAssemblyReload();
+
 
         public static T NewElement<T>() where T : Element
         {

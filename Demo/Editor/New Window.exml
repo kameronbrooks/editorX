@@ -5,11 +5,14 @@
 />
 <tabgroup background-color="#666666" padding="4 4 4 4" color="#EEEEEE">
     <tabview name="Tab 1">
-        <list type="UnityEngine.Vector3" count="2" height="300">
+        <list type="DemoWindow.MaterialSettings" height="300" name="matlist">
             <listitem>
-                <floatfield name="x" />
-                <floatfield name="y" />
-                <floatfield name="z" />
+                <div background-color="#DDDDDD">
+                    <textfield name="_name" />
+                    <intfield name="_size" />
+                    <objectfield name="_mat" type="UnityEngine.Material" />
+                    <textbutton name="OpenWindow" value="open" />
+                </div>
             </listitem>
         </list>
     </tabview>

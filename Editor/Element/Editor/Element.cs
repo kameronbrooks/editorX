@@ -5,6 +5,7 @@ using UnityEngine;
 namespace EditorX
 {
     public delegate void EventCallback(Element elem, Event evnt);
+    public delegate void VoidCallback();
 
     public abstract class Element : ScriptableObject, ISerializationCallbackReceiver
     {

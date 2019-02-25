@@ -36,25 +36,39 @@ namespace EditorX
             _targetType = target.GetType();
         }
 
-
         protected void UpdateChild(Element elem)
         {
             if (target == null) return;
             string name = elem.name;
-            PropertyInfo prop = _targetType.GetProperty(name);
-            if (prop != null)
+            PropertyInfo prop;
+            FieldInfo field;
+            MethodInfo method;
+            if ((prop = _targetType.GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))!= null)
             {
                 elem.SetProperty("value", prop.GetValue(target, emptyList));
                 return;
             }
-            FieldInfo field = _targetType.GetField(name);
-            if (field != null)
+            else if ((field = _targetType.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)) != null)
             {
                 object val = field.GetValue(target);
                 //Debug.Log("setting field value = " + val.ToString());
                 elem.SetProperty("value", val);
                 //Debug.Log("just set field value to = " + children[i].GetProperty("value"));
                 return;
+            }
+            else if ((method = _targetType.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)) != null)
+            {
+                VoidCallback callback;
+                if (method.IsStatic)
+                {
+                    callback = (VoidCallback)System.Delegate.CreateDelegate(typeof(VoidCallback), method);
+                }
+                else
+                {
+                    callback = (VoidCallback)System.Delegate.CreateDelegate(typeof(VoidCallback), target, method);
+                }
+
+                elem.SetProperty("delegate", callback);
             }
 
         }
@@ -65,14 +79,14 @@ namespace EditorX
             object targ = target;
             PropertyInfo prop;
             FieldInfo field;
-            if (( prop = _targetType.GetProperty(name)) != null)
+            if (( prop = _targetType.GetProperty(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)) != null)
             {
                 if (prop.GetValue(targ, emptyList) != childValue)
                 {
                     prop.SetValue(targ, childValue, emptyList);
                 }
             }
-            else if ((field = _targetType.GetField(name)) != null)
+            else if ((field = _targetType.GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)) != null)
             {
                 field.SetValue(targ, childValue);
             } else
@@ -88,16 +102,23 @@ namespace EditorX
             elem.Draw();
             UpdateTargetField(elem);
         }
-
+        protected override void PreGUI()
+        {
+            
+        }
         protected override void OnGUI()
         {
             if (target == null) return;
-
+            
             for(int i = 0; i < children.Count; i += 1)
             {
                 DrawChild(children[i]);
             }
             
+        }
+        protected override void PostGUI()
+        {
+            base.PostGUI();
         }
     }
 }

@@ -6,6 +6,21 @@ namespace EditorX
     [System.Serializable]
     public class TextButton : Element
     {
+
+        VoidCallback _attatchedDelegate;
+        static object[] _emptyList;
+        static object[] emptyList
+        {
+            get
+            {
+                if (_emptyList == null)
+                {
+                    _emptyList = new object[0];
+                }
+                return _emptyList;
+            }
+        }
+
         [SerializeField]
         string _text;
 
@@ -23,7 +38,17 @@ namespace EditorX
             if (GUI.Button(_rect, _text, style.guistyle))
             {
                 CallEvent("click");
+                if (_attatchedDelegate != null)
+                {
+                    _attatchedDelegate.Method.Invoke(_attatchedDelegate.Target, emptyList);
+                    _attatchedDelegate = null;
+                }
             }
+        }
+
+        protected override void PostGUI()
+        {
+            base.PostGUI();
         }
 
         public override bool SetProperty(string name, object value)
@@ -32,6 +57,16 @@ namespace EditorX
 
             switch (name)
             {
+                case "delegate":
+                    if (value == null || value.ToString() == "null")
+                    {
+                        _attatchedDelegate = null;
+                    }
+                    else
+                    {
+                        _attatchedDelegate = (VoidCallback)value;
+                    }
+                    return true;
                 case "text":
                 case "value":
                     _text = value.ToString();
@@ -50,6 +85,7 @@ namespace EditorX
 
             switch (name)
             {
+
                 case "text":
                 case "value":
                     result = _text;
