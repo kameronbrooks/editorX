@@ -39,6 +39,14 @@ namespace EditorX
         protected void UpdateChild(Element elem)
         {
             if (target == null) return;
+            if (elem.children.Count > 0)
+            {
+                for(int i = 0; i < elem.children.Count; i += 1)
+                {
+                    UpdateChild(elem.children[i]);
+                }
+                return;
+            }
             string name = elem.name;
             PropertyInfo prop;
             FieldInfo field;
@@ -74,6 +82,14 @@ namespace EditorX
         }
         protected void UpdateTargetField(Element elem)
         {
+            if (elem.children.Count > 0)
+            {
+                for (int i = 0; i < elem.children.Count; i += 1)
+                {
+                    UpdateTargetField(elem.children[i]);
+                }
+                return;
+            }
             object childValue = elem.GetProperty("value");
             string name = elem.name;
             object targ = target;
